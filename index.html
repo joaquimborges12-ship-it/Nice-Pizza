@@ -1,0 +1,2233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Pizzaria — Pedidos</title>
+<style>
+  :root{
+    --cream:#FBF7EE;
+    --ink:#2B2118;
+    --ink-soft:#6B5E4F;
+    --tomato:#C1440E;
+    --tomato-dark:#9C350A;
+    --tomato-tint:#F7E2D8;
+    --basil:#4C7A3D;
+    --basil-tint:#E4EEDF;
+    --yolk:#D98F1F;
+    --yolk-tint:#FBEBD2;
+    --line:#E4DBC9;
+    --card:#FFFFFF;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum";}
+  a{color:inherit;}
+  button{
+    font-family:inherit;
+    cursor:pointer;
+    border:none;
+    border-radius:var(--radius);
+    font-size:15px;
+    font-weight:600;
+    padding:12px 18px;
+    transition:transform .06s ease, opacity .15s ease;
+  }
+  button:active{transform:scale(0.97);}
+  button.primary{background:var(--tomato);color:#fff;}
+  button.primary:hover{background:var(--tomato-dark);}
+  button.ghost{background:transparent;color:var(--ink-soft);border:1px solid var(--line);}
+  button.success{background:var(--basil);color:#fff;}
+  button.warn{background:var(--yolk);color:#3a2a05;}
+  button.danger-text{background:transparent;color:var(--tomato-dark);padding:6px 8px;font-weight:500;font-size:13px;}
+  button.danger-btn{background:transparent;border:1px solid var(--tomato-dark);color:var(--tomato-dark);}
+  button:disabled{opacity:.4;cursor:not-allowed;}
+  input,select,textarea{
+    font-family:inherit;
+    font-size:15px;
+    padding:10px 12px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:#fff;
+    color:var(--ink);
+    width:100%;
+  }
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--tomato);outline-offset:1px;}
+  label{font-size:13px;color:var(--ink-soft);font-weight:600;display:block;margin-bottom:4px;}
+  .field{margin-bottom:14px;}
+  .form-section{padding-top:16px;margin-top:6px;border-top:1px solid var(--line);}
+  .form-section:first-child{padding-top:0;margin-top:0;border-top:none;}
+  .section-title{font-size:13px;font-weight:700;color:var(--tomato-dark);margin-bottom:12px;}
+  .item-block{background:var(--cream);border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:10px;}
+  .item-block-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .item-subtotal{font-size:13px;color:var(--ink-soft);text-align:right;margin-top:4px;}
+  .row{display:flex;gap:10px;}
+  .row > .field{flex:1;}
+
+  header.topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 20px;border-bottom:1px solid var(--line);
+    background:var(--card);
+    position:sticky;top:0;z-index:10;
+  }
+  header.topbar h1{font-size:17px;margin:0;font-weight:700;letter-spacing:.2px;}
+  header.topbar .tag{font-size:12px;color:var(--ink-soft);}
+  .home-link{font-size:13px;color:var(--ink-soft);text-decoration:none;border:1px solid var(--line);padding:6px 10px;border-radius:8px;}
+
+  main{max-width:1100px;margin:0 auto;padding:18px 16px 60px;}
+
+  /* Landing */
+  .landing{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+  .landing-card{max-width:480px;width:100%;text-align:center;}
+  .landing-logo{width:180px;height:180px;border-radius:50%;object-fit:cover;margin-bottom:18px;box-shadow:0 0 0 4px #fff, 0 4px 14px rgba(0,0,0,.12);}
+  .landing-card h1{font-size:26px;margin:0 0 6px;}
+  .landing-card p{color:var(--ink-soft);margin:0 0 28px;font-size:15px;}
+  .role-links{display:flex;flex-direction:column;gap:12px;}
+  .role-btn{
+    display:block;padding:18px;border-radius:var(--radius);
+    text-decoration:none;font-weight:700;font-size:16px;
+    border:1px solid var(--line);background:#fff;color:var(--ink);
+    text-align:left;position:relative;
+  }
+  .role-btn .sub{display:block;font-weight:400;font-size:13px;color:var(--ink-soft);margin-top:3px;}
+  .role-btn.atendente{border-left:5px solid var(--tomato);}
+  .role-btn.producao{border-left:5px solid var(--yolk);}
+  .role-btn.entregador{border-left:5px solid var(--basil);}
+  .role-btn.admin{border-left:5px solid var(--ink);}
+  .role-btn.config{border-left:5px solid var(--ink-soft);}
+  .role-btn.estoque{border-left:5px solid var(--yolk);}
+
+  .admin-summary{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px;}
+  .stat-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 18px;flex:1;min-width:130px;}
+  .stat-card .val{font-size:22px;font-weight:800;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+  .stat-card .label{font-size:12px;color:var(--ink-soft);margin-top:2px;}
+  .admin-datebar{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
+  .admin-datebar input[type="date"]{width:auto;}
+  table.orders td.dim{color:var(--ink-soft);}
+
+  /* Atendente layout */
+  .atendente-layout{display:flex;gap:24px;align-items:flex-start;}
+  .form-col{flex:0 0 360px;}
+  .list-col{flex:1;min-width:0;}
+  @media (max-width:820px){
+    .atendente-layout{flex-direction:column;}
+    .form-col{flex:1;width:100%;}
+  }
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;}
+  .panel + .panel{margin-top:16px;}
+  .panel h2{font-size:15px;margin:0 0 14px;}
+
+  .search-box{margin-bottom:12px;}
+
+  .tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid var(--line);}
+  .tab-btn{background:transparent;border:none;border-radius:0;padding:8px 4px;margin-right:18px;font-size:14px;font-weight:600;color:var(--ink-soft);border-bottom:2px solid transparent;}
+  .tab-btn.active{color:var(--tomato-dark);border-bottom-color:var(--tomato);}
+
+  .autocomplete-wrap{position:relative;}
+  .suggestions{
+    position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid var(--line);
+    border-top:none;border-radius:0 0 8px 8px;max-height:220px;overflow:auto;z-index:20;
+    box-shadow:0 6px 14px rgba(0,0,0,.08);
+  }
+  .suggestions .sugg-item{padding:9px 12px;font-size:14px;cursor:pointer;border-bottom:1px solid var(--line);}
+  .suggestions .sugg-item:last-child{border-bottom:none;}
+  .suggestions .sugg-item:hover{background:var(--cream);}
+  .suggestions .sugg-item .sname{font-weight:600;}
+  .suggestions .sugg-item .sphone{color:var(--ink-soft);font-size:12px;}
+  .selected-client{
+    display:flex;align-items:center;justify-content:space-between;
+    background:var(--basil-tint);color:var(--basil);padding:8px 12px;border-radius:8px;
+    font-size:13px;font-weight:600;margin-bottom:14px;
+  }
+  .selected-client button{background:transparent;color:var(--basil);padding:2px 6px;font-size:12px;text-decoration:underline;}
+
+  .client-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);}
+  .client-thumb{width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0;}
+  .casa-thumb{width:100%;max-height:220px;object-fit:cover;border-radius:8px;margin-top:8px;display:block;}
+  .foto-box{margin-top:8px;}
+  .client-row:last-child{border-bottom:none;}
+  .client-row .info .name{font-weight:700;font-size:14px;}
+  .client-row .info .sub{font-size:13px;color:var(--ink-soft);}
+  .client-row .actions{display:flex;gap:6px;flex-shrink:0;}
+  .client-row .actions button{padding:6px 9px;font-size:12px;}
+
+  table.orders{width:100%;border-collapse:collapse;font-size:14px;}
+  table.orders th{text-align:left;font-size:12px;color:var(--ink-soft);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line);}
+  table.orders td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top;}
+  table.orders tr:last-child td{border-bottom:none;}
+  .status-pill{display:inline-block;padding:3px 9px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;}
+  .status-Pendente{background:var(--yolk-tint);color:#7a5305;}
+  .status-EmProducao{background:#FDEBD8;color:var(--tomato-dark);}
+  .status-Pronta{background:var(--basil-tint);color:var(--basil);}
+  .status-Saiu{background:#DCEAF7;color:#2E5F8A;}
+  .status-Entregue{background:#EDEDED;color:#555;}
+  .status-Cancelada{background:#F5DADA;color:#8A2E2E;text-decoration:line-through;}
+
+  .empty{color:var(--ink-soft);font-size:14px;padding:20px 4px;text-align:center;}
+
+  /* Producao */
+  .prod-columns{display:flex;gap:18px;}
+  .prod-col{flex:1;min-width:0;}
+  .prod-col h2{display:flex;align-items:center;justify-content:space-between;font-size:15px;}
+  .count-badge{background:var(--line);color:var(--ink);border-radius:20px;padding:1px 9px;font-size:12px;}
+  @media (max-width:720px){.prod-columns{flex-direction:column;}}
+  .order-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:12px;}
+  .order-card.late{border-color:var(--tomato);box-shadow:0 0 0 1px var(--tomato) inset;}
+  .deliv-card.late{border-color:var(--tomato);box-shadow:0 0 0 1px var(--tomato) inset;}
+  .order-card .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .order-card .numero{font-size:20px;font-weight:800;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+  .order-card .timer-pill{font-size:14px;font-weight:700;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--cream);border:1px solid var(--line);border-radius:20px;padding:3px 12px;color:var(--ink);}
+  .order-card.late .timer-pill{background:var(--tomato);color:#fff;border-color:var(--tomato);}
+  .order-card .meta{font-size:14px;color:var(--ink);font-weight:400;margin-top:2px;}
+  .order-card .obs{font-size:14px;color:var(--ink);font-weight:400;margin-top:8px;background:var(--yolk-tint);padding:6px 9px;border-radius:6px;}
+  .order-card .footer{font-size:13px;color:var(--ink-soft);margin-top:10px;padding-top:8px;border-top:1px solid var(--line);}
+  .order-card .actions{margin-top:12px;display:flex;gap:8px;}
+  .flavor-line{font-size:17px;color:var(--ink);font-weight:700;margin-top:0;}
+  .pizza-item-line{margin-bottom:8px;padding-bottom:8px;border-bottom:1px dashed var(--line);}
+  .pizza-item-line:last-of-type{border-bottom:none;padding-bottom:0;}
+
+  /* Entregador */
+  .deliv-section h2{font-size:14px;color:var(--ink-soft);text-transform:none;margin:22px 0 10px;}
+  .deliv-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:12px;}
+  .deliv-card .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .deliv-card .numero{font-size:20px;font-weight:800;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+  .deliv-card .timer-pill{font-size:14px;font-weight:700;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--cream);border:1px solid var(--line);border-radius:20px;padding:3px 12px;color:var(--ink);}
+  .deliv-card.late .timer-pill{background:var(--tomato);color:#fff;border-color:var(--tomato);}
+  .deliv-card .addr{font-size:17px;font-weight:700;margin:0;}
+  .deliv-card .meta{font-size:14px;color:var(--ink);margin-top:4px;}
+  .deliv-card .pay{display:block;margin-top:8px;font-size:14px;background:var(--yolk-tint);padding:6px 9px;border-radius:6px;}
+  .deliv-card .footer{font-size:13px;color:var(--ink-soft);margin-top:10px;padding-top:8px;border-top:1px solid var(--line);}
+  .deliv-card .linkrow{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;}
+  .deliv-card .linkrow a{font-size:13px;text-decoration:none;color:var(--tomato-dark);border:1px solid var(--line);padding:8px 10px;border-radius:8px;}
+  .deliv-card .actions{margin-top:12px;}
+  .deliv-card .addr-locked{font-size:17px;font-weight:700;color:var(--ink-soft);}
+  .bebida-check{display:flex;align-items:center;gap:8px;font-size:14px;background:var(--basil-tint);color:var(--basil);padding:8px 10px;border-radius:8px;margin-top:8px;font-weight:600;}
+  .pix-lock-note{font-size:14px;background:var(--yolk-tint);color:#7a5305;padding:8px 10px;border-radius:8px;margin-top:8px;font-weight:600;}
+  .bebida-check input{width:auto;}
+  .link-disabled{font-size:13px;color:var(--ink-soft);border:1px solid var(--line);padding:8px 10px;border-radius:8px;opacity:.6;cursor:not-allowed;}
+  .deliv-card .actions button{width:100%;}
+
+  .toast{
+    position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+    background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;
+    font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s ease, bottom .25s ease;
+    z-index:100;
+  }
+  .toast.show{opacity:1;bottom:32px;}
+
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px;}
+  .modal{background:#fff;border-radius:var(--radius);padding:20px;max-width:420px;width:100%;max-height:90vh;overflow:auto;}
+  .modal h3{margin:0 0 14px;font-size:16px;}
+  .modal .actions{display:flex;gap:10px;margin-top:16px;}
+</style>
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+</head>
+<body>
+<div id="app"></div>
+<div id="toast" class="toast"></div>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  const SUPABASE_URL = "https://celrybrlzirddysdulfz.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_XWDXi5AQVYEEpxprqKl6TQ_O4jThYVi";
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+
+
+  function todayStr(){
+    const d = new Date();
+    return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  }
+  function daysAgo(n){
+    const d = new Date();
+    d.setDate(d.getDate()-n);
+    return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  }
+  function fmtTime(iso){
+    if(!iso) return "—";
+    const d = new Date(iso);
+    return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
+  }
+  function minutesSince(iso){
+    if(!iso) return 0;
+    return Math.floor((Date.now() - new Date(iso).getTime())/60000);
+  }
+
+  /* ---------- Data layer (Supabase) ---------- */
+  // table "pedidos": id, data, numero, tamanho, sabor1, sabor2, quantidade,
+  //   observacoes, nome, telefone, endereco, pagamento, troco, status,
+  //   horario_pedido, horario_inicio_producao, horario_pronta, horario_saida, horario_entrega
+  // table "clientes": id (telefone normalizado), nome, telefone, endereco, observacoes
+
+  function rowToOrder(row){
+    return {
+      id: row.id, date: row.data, numero: row.numero,
+      nome: row.nome, telefone: row.telefone, endereco: row.endereco, linkMaps: row.link_maps,
+      pagamento: row.pagamento, troco: row.troco, valor: row.valor, status: row.status,
+      pixConfirmado: !!row.pix_confirmado, fotoClienteUrl: row.foto_cliente_url||"",
+      entregaLat: row.entrega_lat, entregaLng: row.entrega_lng,
+      itens: [], bebidas: [],
+      horarios: {
+        pedido: row.horario_pedido, inicioProducao: row.horario_inicio_producao,
+        pronta: row.horario_pronta, saida: row.horario_saida, entrega: row.horario_entrega
+      }
+    };
+  }
+  function orderToRow(order){
+    return {
+      data: order.date, numero: order.numero,
+      nome: order.nome, telefone: order.telefone, endereco: order.endereco, link_maps: order.linkMaps||"",
+      pagamento: order.pagamento, troco: order.troco||"", valor: order.valor||0, status: order.status,
+      pix_confirmado: !!order.pixConfirmado, foto_cliente_url: order.fotoClienteUrl||"",
+      entrega_lat: order.entregaLat != null ? order.entregaLat : null,
+      entrega_lng: order.entregaLng != null ? order.entregaLng : null,
+      horario_pedido: order.horarios.pedido, horario_inicio_producao: order.horarios.inicioProducao,
+      horario_pronta: order.horarios.pronta, horario_saida: order.horarios.saida, horario_entrega: order.horarios.entrega
+    };
+  }
+
+  function rowToPizzaItem(row){
+    return { id: row.id, tamanho: row.tamanho, sabor1: row.sabor1, sabor2: row.sabor2||"",
+      meioAMeio: !!row.sabor2, borda: row.borda||"", quantidade: row.quantidade||1,
+      observacoes: row.observacoes||"", valor: row.valor||0 };
+  }
+  function pizzaItemToRow(pedidoId, item){
+    return { pedido_id: pedidoId, tamanho: item.tamanho, sabor1: item.sabor1,
+      sabor2: item.meioAMeio ? (item.sabor2||"") : "", borda: item.borda||"",
+      quantidade: parseInt(item.quantidade)||1, observacoes: item.observacoes||"", valor: item.valor||0 };
+  }
+  function rowToBebidaItem(row){
+    return { id: row.id, nome: row.nome, quantidade: row.quantidade||1, valor: row.valor||0 };
+  }
+  function bebidaItemToRow(pedidoId, item){
+    return { pedido_id: pedidoId, nome: item.nome, quantidade: parseInt(item.quantidade)||1, valor: item.valor||0 };
+  }
+
+  async function attachItems(orders){
+    if(!orders.length) return;
+    const ids = orders.map(o=>o.id);
+    const [{data:pizzaRows, error:e1}, {data:bebidaRows, error:e2}] = await Promise.all([
+      supabase.from("itens_pedido").select("*").in("pedido_id", ids),
+      supabase.from("itens_bebida").select("*").in("pedido_id", ids)
+    ]);
+    if(e1) console.error(e1);
+    if(e2) console.error(e2);
+    const pizzaGrouped = {};
+    (pizzaRows||[]).forEach(r=>{ (pizzaGrouped[r.pedido_id] = pizzaGrouped[r.pedido_id]||[]).push(rowToPizzaItem(r)); });
+    const bebidaGrouped = {};
+    (bebidaRows||[]).forEach(r=>{ (bebidaGrouped[r.pedido_id] = bebidaGrouped[r.pedido_id]||[]).push(rowToBebidaItem(r)); });
+    orders.forEach(o=>{ o.itens = pizzaGrouped[o.id] || []; o.bebidas = bebidaGrouped[o.id] || []; });
+  }
+
+  function fmtMoney(v){
+    const n = Number(v)||0;
+    return "R$ " + n.toLocaleString("pt-BR", {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
+  async function createOrder(orderData, pizzaItems, bebidaItems){
+    const date = todayStr();
+    const { data: last } = await supabase.from("pedidos").select("numero")
+      .eq("data", date).order("numero", {ascending:false}).limit(1);
+    const numero = (last && last[0] ? last[0].numero : 0) + 1;
+    const order = {
+      date, numero,
+      nome:orderData.nome, telefone:orderData.telefone, endereco:orderData.endereco, linkMaps:orderData.link_maps||"",
+      pagamento:orderData.pagamento, troco:orderData.troco||"", valor:parseFloat(String(orderData.valor||"0").replace(",", "."))||0,
+      status:"Pendente", pixConfirmado:false, fotoClienteUrl:orderData.fotoClienteUrl||"",
+      horarios:{ pedido:new Date().toISOString(), inicioProducao:null, pronta:null, saida:null, entrega:null }
+    };
+    const { data: inserted, error } = await supabase.from("pedidos").insert(orderToRow(order)).select().single();
+    if(error){ console.error(error); throw error; }
+    const insertedOrder = rowToOrder(inserted);
+    if(pizzaItems.length){
+      const { error: e1 } = await supabase.from("itens_pedido").insert(pizzaItems.map(it=>pizzaItemToRow(insertedOrder.id, it)));
+      if(e1) console.error(e1);
+    }
+    if(bebidaItems.length){
+      const { error: e2 } = await supabase.from("itens_bebida").insert(bebidaItems.map(it=>bebidaItemToRow(insertedOrder.id, it)));
+      if(e2) console.error(e2);
+    }
+    insertedOrder.itens = pizzaItems;
+    insertedOrder.bebidas = bebidaItems;
+    for(const item of pizzaItems){ await adjustEstoqueMassa(item.tamanho, -(parseInt(item.quantidade)||1)); }
+    for(const b of bebidaItems){ await adjustEstoqueBebida(b.nome, -(parseInt(b.quantidade)||1)); }
+    return insertedOrder;
+  }
+
+  async function saveOrder(order){
+    const { error } = await supabase.from("pedidos").update(orderToRow(order)).eq("id", order.id);
+    if(error) console.error(error);
+  }
+
+  async function getOrderByNumero(date, numero){
+    const { data, error } = await supabase.from("pedidos").select("*")
+      .eq("data", date).eq("numero", numero).maybeSingle();
+    if(error){ console.error(error); return null; }
+    if(!data) return null;
+    const order = rowToOrder(data);
+    await attachItems([order]);
+    return order;
+  }
+
+  async function getOrdersForDate(date){
+    const { data, error } = await supabase.from("pedidos").select("*")
+      .eq("data", date).order("horario_pedido", {ascending:true});
+    if(error){ console.error(error); return []; }
+    const orders = data.map(rowToOrder);
+    await attachItems(orders);
+    return orders;
+  }
+
+  async function getOrdersForRange(startDate, endDate){
+    const { data, error } = await supabase.from("pedidos").select("*")
+      .gte("data", startDate).lte("data", endDate).order("horario_pedido", {ascending:true});
+    if(error){ console.error(error); return []; }
+    const orders = data.map(rowToOrder);
+    await attachItems(orders);
+    return orders;
+  }
+
+  async function getRecentOrders(daysBack){
+    const cutoff = daysAgo(daysBack);
+    const { data, error } = await supabase.from("pedidos").select("*")
+      .gte("data", cutoff).order("horario_pedido", {ascending:true});
+    if(error){ console.error(error); return []; }
+    const orders = data.map(rowToOrder);
+    await attachItems(orders);
+    return orders;
+  }
+
+  /* date range helpers for Administração */
+  function parseYMD(s){
+    const [y,m,d] = s.split("-").map(Number);
+    return new Date(y, m-1, d);
+  }
+  function fmtYMD(d){
+    return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  }
+  function weekRange(dateStr){
+    const d = parseYMD(dateStr);
+    const dow = d.getDay(); // 0=domingo
+    const diffToMonday = dow === 0 ? -6 : 1 - dow;
+    const monday = new Date(d); monday.setDate(d.getDate()+diffToMonday);
+    const sunday = new Date(monday); sunday.setDate(monday.getDate()+6);
+    return [fmtYMD(monday), fmtYMD(sunday)];
+  }
+  function monthRange(dateStr){
+    const d = parseYMD(dateStr);
+    const first = new Date(d.getFullYear(), d.getMonth(), 1);
+    const last = new Date(d.getFullYear(), d.getMonth()+1, 0);
+    return [fmtYMD(first), fmtYMD(last)];
+  }
+  function fmtDateBR(s){
+    const d = parseYMD(s);
+    return String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0");
+  }
+
+  /* ---------- Clientes ---------- */
+  function normalizePhone(tel){ return (tel||"").replace(/\D/g,""); }
+
+  async function upsertClient(data){
+    const id = normalizePhone(data.telefone);
+    if(!id) return null;
+    const client = {
+      id,
+      nome:data.nome||"",
+      telefone:data.telefone||"",
+      endereco:data.endereco||"",
+      link_maps:data.link_maps||"",
+      observacoes:data.observacoes||""
+    };
+    if(data.foto_url !== undefined) client.foto_url = data.foto_url;
+    const { error } = await supabase.from("clientes").upsert(client);
+    if(error) console.error(error);
+    return client;
+  }
+
+  async function uploadClientPhoto(clientId, file){
+    const path = `${clientId}.jpg`;
+    const { error: upErr } = await supabase.storage.from("fotos-clientes").upload(path, file, { upsert:true, contentType: file.type });
+    if(upErr){ console.error(upErr); return null; }
+    const { data } = supabase.storage.from("fotos-clientes").getPublicUrl(path);
+    return data ? data.publicUrl + "?t=" + Date.now() : null;
+  }
+
+  async function getClients(){
+    const { data, error } = await supabase.from("clientes").select("*").order("nome", {ascending:true});
+    if(error){ console.error(error); return []; }
+    return data;
+  }
+
+  async function deleteClient(id){
+    const { error } = await supabase.from("clientes").delete().eq("id", id);
+    if(error) console.error(error);
+  }
+
+  /* ---------- Listas de configuração (sabores e bebidas) ---------- */
+  async function upsertItem(table, data){
+    const nome = data.nome;
+    if(!nome || !nome.trim()) return null;
+    const id = nome.trim().toLowerCase();
+    const item = { id, ...data, nome: nome.trim() };
+    const { error } = await supabase.from(table).upsert(item);
+    if(error) console.error(error);
+    return item;
+  }
+  async function deleteItem(table, id){
+    const { error } = await supabase.from(table).delete().eq("id", id);
+    if(error) console.error(error);
+  }
+  async function getItems(table){
+    const { data, error } = await supabase.from(table).select("*").order("nome", {ascending:true});
+    if(error){ console.error(error); return []; }
+    return data;
+  }
+
+  /* ---------- Estoque ---------- */
+  async function getEstoqueMassa(){
+    const { data, error } = await supabase.from("estoque_massa").select("*");
+    if(error){ console.error(error); return {M:0,G:0}; }
+    const result = {M:0, G:0};
+    (data||[]).forEach(r=> result[r.tamanho] = r.quantidade);
+    return result;
+  }
+  async function setEstoqueMassa(tamanho, quantidade){
+    const { error } = await supabase.from("estoque_massa").upsert({tamanho, quantidade: Math.max(0, quantidade)});
+    if(error) console.error(error);
+  }
+  async function adjustEstoqueMassa(tamanho, delta){
+    if(!tamanho) return;
+    const { data } = await supabase.from("estoque_massa").select("quantidade").eq("tamanho", tamanho).maybeSingle();
+    const current = data ? data.quantidade : 0;
+    await setEstoqueMassa(tamanho, current + delta);
+  }
+  async function adjustEstoqueBebida(nome, delta){
+    const id = (nome||"").trim().toLowerCase();
+    if(!id) return;
+    const { data } = await supabase.from("bebidas").select("estoque").eq("id", id).maybeSingle();
+    if(!data) return;
+    const current = data.estoque || 0;
+    const { error } = await supabase.from("bebidas").update({ estoque: Math.max(0, current + delta) }).eq("id", id);
+    if(error) console.error(error);
+  }
+  async function restockOrder(order){
+    for(const item of (order.itens||[])){ await adjustEstoqueMassa(item.tamanho, parseInt(item.quantidade)||1); }
+    for(const b of (order.bebidas||[])){ await adjustEstoqueBebida(b.nome, b.quantidade); }
+  }
+
+  /* ---------- Rastreamento do entregador ---------- */
+  async function getRastreamentoAtivo(){
+    const { data, error } = await supabase.from("rastreamento_config").select("ativo").eq("id","config").maybeSingle();
+    if(error){ console.error(error); return false; }
+    return data ? !!data.ativo : false;
+  }
+  async function setRastreamentoAtivo(ativo){
+    const { error } = await supabase.from("rastreamento_config").upsert({ id:"config", ativo });
+    if(error) console.error(error);
+  }
+  async function getLocalizacaoEntregador(){
+    const { data, error } = await supabase.from("localizacao_entregador").select("*").eq("id","entregador").maybeSingle();
+    if(error){ console.error(error); return null; }
+    return data;
+  }
+  async function upsertLocalizacaoEntregador(lat, lng){
+    const { error } = await supabase.from("localizacao_entregador")
+      .upsert({ id:"entregador", lat, lng, updated_at: new Date().toISOString() });
+    if(error) console.error(error);
+  }
+
+  /* ---------- Toast ---------- */
+  let toastTimer;
+  function toast(msg){
+    const el = document.getElementById("toast");
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=> el.classList.remove("show"), 2200);
+  }
+
+  /* ---------- Sound ---------- */
+  function beep(){
+    try{
+      const ctx = new (window.AudioContext||window.webkitAudioContext)();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = "sine";
+      o.frequency.value = 880;
+      g.gain.value = 0.15;
+      o.connect(g); g.connect(ctx.destination);
+      o.start();
+      setTimeout(()=>{ o.stop(); ctx.close(); }, 220);
+    }catch(e){}
+  }
+
+  function statusClass(s){ return "status-"+s.replace(/\s/g,""); }
+  function itemFlavorLabel(item){
+    return (item.meioAMeio && item.sabor2) ? (item.sabor1 + " / " + item.sabor2 + " (meio a meio)") : item.sabor1;
+  }
+  function orderPizzasSummary(o){
+    if(!o.itens || !o.itens.length) return "";
+    return o.itens.map(it => `${it.tamanho||""} ${itemFlavorLabel(it)}${it.quantidade>1?" (x"+it.quantidade+")":""}`).join("<br>");
+  }
+  function orderBebidasSummary(o){
+    if(!o.bebidas || !o.bebidas.length) return "";
+    return o.bebidas.map(b => `${b.nome}${b.quantidade>1?" x"+b.quantidade:""}`).join(", ");
+  }
+
+  /* ---------- Itens do pedido (pizzas e bebidas) — preços e blocos do formulário ---------- */
+  function emptyPizzaItem(){ return {tamanho:"", sabor1:"", meioAMeio:false, sabor2:"", borda:"", quantidade:1, observacoes:"", valor:0}; }
+  function emptyBebidaItem(){ return {nome:"", quantidade:1, valor:0}; }
+  function findByNomeCI(cache, nome){
+    const q = (nome||"").trim().toLowerCase();
+    if(!q) return null;
+    return cache.find(it => it.nome.toLowerCase()===q) || null;
+  }
+  function pizzaItemPrice(item, saboresCache, bordasCache){
+    const priceOf = (cache, nome)=>{
+      const it = findByNomeCI(cache, nome);
+      if(!it) return 0;
+      return item.tamanho==="G" ? (Number(it.preco_g)||0) : (Number(it.preco_m)||0);
+    };
+    let p = priceOf(saboresCache, item.sabor1);
+    if(item.meioAMeio && item.sabor2) p = Math.max(p, priceOf(saboresCache, item.sabor2));
+    const bp = item.borda ? priceOf(bordasCache, item.borda) : 0;
+    return (parseInt(item.quantidade)||1) * (p+bp);
+  }
+  function bebidaItemPrice(item, bebidasCache){
+    const found = findByNomeCI(bebidasCache, item.nome);
+    const unit = found ? Number(found.preco)||0 : 0;
+    return (parseInt(item.quantidade)||1) * unit;
+  }
+  function renderPizzaItemBlock(item, idx, canRemove){
+    return `
+    <div class="item-block" data-idx="${idx}">
+      <div class="item-block-header"><strong>Pizza ${idx+1}</strong>${canRemove?`<button type="button" class="danger-text remove-pizza-btn" data-idx="${idx}">Remover</button>`:""}</div>
+      <div class="row">
+        <div class="field"><label>Tamanho</label>
+          <select class="pz-tamanho" data-idx="${idx}">
+            <option value="" ${!item.tamanho?"selected":""}>Selecione</option>
+            <option value="M" ${item.tamanho==="M"?"selected":""}>M</option>
+            <option value="G" ${item.tamanho==="G"?"selected":""}>G</option>
+          </select>
+        </div>
+        <div class="field"><label>Quantidade</label>
+          <input class="pz-quantidade" type="number" min="1" value="${item.quantidade}" data-idx="${idx}">
+        </div>
+      </div>
+      <div class="field"><label>Sabor 1</label>
+        <input class="pz-sabor1" list="sabores-datalist" autocomplete="off" placeholder="Ex: Calabresa" value="${item.sabor1}" data-idx="${idx}">
+      </div>
+      <div class="field"><label><input type="checkbox" class="pz-meio" data-idx="${idx}" ${item.meioAMeio?"checked":""} style="width:auto;margin-right:6px;">Meio a meio?</label></div>
+      <div class="field pz-sabor2-field" data-idx="${idx}" style="display:${item.meioAMeio?"block":"none"};">
+        <label>Sabor 2</label>
+        <input class="pz-sabor2" list="sabores-datalist" autocomplete="off" placeholder="Ex: Portuguesa" value="${item.sabor2}" data-idx="${idx}">
+      </div>
+      <div class="field"><label>Borda (opcional)</label>
+        <input class="pz-borda" list="bordas-datalist" autocomplete="off" placeholder="Ex: Catupiry" value="${item.borda}" data-idx="${idx}">
+      </div>
+      <div class="field"><label>Observações (opcional)</label>
+        <input class="pz-obs" placeholder="Ex: sem cebola" value="${item.observacoes}" data-idx="${idx}">
+      </div>
+      <div class="item-subtotal">Subtotal: <span class="pz-subtotal">${fmtMoney(item.valor)}</span></div>
+    </div>`;
+  }
+  function renderBebidaItemBlock(item, idx){
+    return `
+    <div class="item-block" data-idx="${idx}">
+      <div class="item-block-header"><strong>Bebida ${idx+1}</strong><button type="button" class="danger-text remove-bebida-btn" data-idx="${idx}">Remover</button></div>
+      <div class="row">
+        <div class="field" style="flex:2;"><label>Bebida</label>
+          <input class="bb-nome" list="bebidas-datalist" autocomplete="off" placeholder="Ex: Coca-Cola 2L" value="${item.nome}" data-idx="${idx}">
+        </div>
+        <div class="field"><label>Quantidade</label>
+          <input class="bb-quantidade" type="number" min="1" value="${item.quantidade}" data-idx="${idx}">
+        </div>
+      </div>
+      <div class="item-subtotal">Subtotal: <span class="bb-subtotal">${fmtMoney(item.valor)}</span></div>
+    </div>`;
+  }
+
+  /* ================= ATENDENTE ================= */
+  const Atendente = {
+    root:null, clientsCache:[], saboresCache:[], bebidasCache:[], bordasCache:[],
+    selectedClientId:null, editingClientId:null, valorManualmenteEditado:false,
+    pizzaItems:[], bebidaItems:[], estoqueMassa:{M:0,G:0},
+    rastreamentoAtivo:false, rastreamentoMap:null, rastreamentoMarker:null,
+    async render(root){
+      this.root = root;
+      this.selectedClientId = null;
+      this.editingClientId = null;
+      this.valorManualmenteEditado = false;
+      this.pizzaItems = [emptyPizzaItem()];
+      this.bebidaItems = [];
+      this.rastreamentoMap = null;
+      this.rastreamentoMarker = null;
+      root.innerHTML = `
+        <header class="topbar">
+          <div><h1>🍕 Atendente</h1><div class="tag">Lançamento de pedidos</div></div>
+          <a class="home-link" href="#/">trocar tela</a>
+        </header>
+        <main>
+          <div class="atendente-layout">
+            <div class="form-col">
+              <div class="panel">
+                <div class="tabs">
+                  <button type="button" class="tab-btn active" data-tab="pedido">Novo pedido</button>
+                  <button type="button" class="tab-btn" data-tab="clientes">Clientes</button>
+                </div>
+
+                <div id="tab-pedido">
+                  <form id="order-form">
+                    <div class="form-section">
+                      <div class="section-title">1. Cliente</div>
+                      <div class="field autocomplete-wrap">
+                        <input id="cliente-search" autocomplete="off" placeholder="🔍 Buscar cliente já cadastrado (nome ou telefone)">
+                        <div id="cliente-suggestions"></div>
+                      </div>
+                      <div id="selected-client-box"></div>
+                      <div class="row">
+                        <div class="field">
+                          <label>Nome</label>
+                          <input name="nome" required>
+                        </div>
+                        <div class="field">
+                          <label>Telefone</label>
+                          <input name="telefone" required placeholder="(00) 00000-0000">
+                        </div>
+                      </div>
+                      <div class="field">
+                        <label>Endereço</label>
+                        <textarea name="endereco" rows="2" required></textarea>
+                      </div>
+                      <div class="field">
+                        <label>Link do Google Maps (opcional)</label>
+                        <input name="link_maps" placeholder="https://maps.app.goo.gl/...">
+                      </div>
+                    </div>
+
+                    <div class="form-section">
+                      <div class="section-title">2. Pizza(s)</div>
+                      <div id="massa-info" class="tag" style="margin-bottom:10px;"></div>
+                      <div id="pizza-items-list"></div>
+                      <button type="button" class="ghost" id="add-pizza-btn" style="width:100%;">+ Adicionar outra pizza</button>
+                      <datalist id="sabores-datalist"></datalist>
+                      <datalist id="bordas-datalist"></datalist>
+                    </div>
+
+                    <div class="form-section">
+                      <div class="section-title">3. Bebida(s)</div>
+                      <div id="bebida-items-list"></div>
+                      <button type="button" class="ghost" id="add-bebida-btn" style="width:100%;">+ Adicionar bebida</button>
+                      <datalist id="bebidas-datalist"></datalist>
+                    </div>
+
+                    <div class="form-section">
+                      <div class="section-title">4. Pagamento</div>
+                      <div class="row">
+                        <div class="field">
+                          <label>Valor total (R$)</label>
+                          <input name="valor" type="number" step="0.01" min="0" placeholder="0,00" required>
+                        </div>
+                        <div class="field">
+                          <label>Forma de pagamento</label>
+                          <select name="pagamento" required>
+                            <option value="">Selecione</option>
+                            <option>Dinheiro</option><option>Cartão</option><option>Pix</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="field" id="troco-field" style="display:none;">
+                        <label>Troco para quanto?</label>
+                        <input name="troco" placeholder="Ex: 50">
+                      </div>
+                    </div>
+
+                    <div class="field" style="margin-top:4px;">
+                      <label style="display:flex;align-items:center;gap:6px;font-weight:400;">
+                        <input type="checkbox" id="salvar-cliente" style="width:auto;" checked>
+                        Salvar/atualizar este cliente no cadastro
+                      </label>
+                    </div>
+                    <button type="submit" class="primary" style="width:100%;">Enviar para produção</button>
+                  </form>
+                </div>
+
+                <div id="tab-clientes" style="display:none;">
+                  <form id="client-form">
+                    <div class="field">
+                      <label>Nome</label>
+                      <input name="nome" required>
+                    </div>
+                    <div class="field">
+                      <label>Telefone</label>
+                      <input name="telefone" required placeholder="(00) 00000-0000">
+                    </div>
+                    <div class="field">
+                      <label>Endereço</label>
+                      <textarea name="endereco" rows="2" required></textarea>
+                    </div>
+                    <div class="field">
+                      <label>Link do Google Maps (opcional — cole o link que o cliente mandou no WhatsApp)</label>
+                      <input name="link_maps" placeholder="https://maps.app.goo.gl/...">
+                    </div>
+                    <div class="field">
+                      <label>Observações (opcional)</label>
+                      <input name="observacoes" placeholder="Ex: referência conhecida, ponto de entrega">
+                    </div>
+                    <div class="field">
+                      <label>Foto da frente da casa (opcional)</label>
+                      <input type="file" accept="image/*" id="cliente-foto-input">
+                      <div id="cliente-foto-preview" style="margin-top:8px;"></div>
+                    </div>
+                    <div class="row">
+                      <button type="submit" class="primary" style="flex:1;" id="client-submit-btn">Salvar cliente</button>
+                      <button type="button" class="ghost" id="client-cancel-edit" style="display:none;">Cancelar edição</button>
+                    </div>
+                  </form>
+                  <hr style="border:none;border-top:1px solid var(--line);margin:18px 0;">
+                  <input class="search-box" id="client-search" placeholder="Buscar cliente por nome ou telefone...">
+                  <div id="clients-list"></div>
+                </div>
+
+              </div>
+            </div>
+            <div class="list-col">
+              <div class="panel">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+                  <h2 style="margin:0;">Pedidos de hoje</h2>
+                  <button type="button" class="ghost" id="toggle-view-btn">📍 Ver rastreamento</button>
+                </div>
+                <div id="dashboard-pedidos-view" style="margin-top:14px;">
+                  <input class="search-box" id="search" placeholder="Buscar por nome ou nº da comanda...">
+                  <div id="orders-list"></div>
+                </div>
+                <div id="dashboard-rastreamento-view" style="display:none;margin-top:14px;">
+                  <button type="button" id="toggle-rastreamento-btn" class="primary" style="width:100%;">Carregando...</button>
+                  <div id="rastreamento-status" class="tag" style="margin:10px 0;"></div>
+                  <div id="rastreamento-map" style="height:480px;border-radius:8px;overflow:hidden;background:var(--line);"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+        <div id="modal-holder"></div>
+      `;
+
+      // tab switching
+      root.querySelectorAll(".tab-btn").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          root.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+          btn.classList.add("active");
+          const tab = btn.dataset.tab;
+          root.querySelector("#tab-pedido").style.display = tab==="pedido" ? "block" : "none";
+          root.querySelector("#tab-clientes").style.display = tab==="clientes" ? "block" : "none";
+          if(tab==="clientes") this.refreshClientsList();
+        });
+      });
+
+      root.querySelector("#toggle-view-btn").addEventListener("click", ()=>{
+        const pedidosView = root.querySelector("#dashboard-pedidos-view");
+        const rastreamentoView = root.querySelector("#dashboard-rastreamento-view");
+        const btn = root.querySelector("#toggle-view-btn");
+        const showingPedidos = pedidosView.style.display !== "none";
+        if(showingPedidos){
+          pedidosView.style.display = "none";
+          rastreamentoView.style.display = "block";
+          btn.textContent = "📋 Ver pedidos";
+          this.initRastreamentoTab();
+        } else {
+          pedidosView.style.display = "block";
+          rastreamentoView.style.display = "none";
+          btn.textContent = "📍 Ver rastreamento";
+          this.refresh();
+        }
+      });
+
+      root.querySelector("#toggle-rastreamento-btn").addEventListener("click", async ()=>{
+        const btn = root.querySelector("#toggle-rastreamento-btn");
+        const novoEstado = !this.rastreamentoAtivo;
+        await setRastreamentoAtivo(novoEstado);
+        this.rastreamentoAtivo = novoEstado;
+        this.updateRastreamentoBtn();
+      });
+
+      root.querySelector('select[name="pagamento"]').addEventListener("change", e=>{
+        root.querySelector("#troco-field").style.display = e.target.value === "Dinheiro" ? "block" : "none";
+      });
+
+      // Enter avança pro próximo campo em vez de enviar o formulário (agiliza digitação)
+      const orderForm = root.querySelector("#order-form");
+      orderForm.addEventListener("keydown", e=>{
+        if(e.key !== "Enter" || e.target.tagName === "TEXTAREA") return;
+        e.preventDefault();
+        const focusable = Array.from(orderForm.querySelectorAll("input, select, textarea"))
+          .filter(el => el.offsetParent !== null && !el.disabled);
+        const idx = focusable.indexOf(e.target);
+        if(idx > -1 && idx < focusable.length - 1){
+          focusable[idx+1].focus();
+          if(focusable[idx+1].select) focusable[idx+1].select();
+        }
+      });
+
+      root.querySelector("#add-pizza-btn").addEventListener("click", ()=>{
+        this.pizzaItems.push(emptyPizzaItem());
+        this.renderPizzaItems();
+      });
+      root.querySelector("#add-bebida-btn").addEventListener("click", ()=>{
+        this.bebidaItems.push(emptyBebidaItem());
+        this.renderBebidaItems();
+      });
+
+      root.querySelector('[name="valor"]').addEventListener("input", ()=>{
+        this.valorManualmenteEditado = true;
+      });
+
+      // autocomplete
+      await this.loadClientsCache();
+      await this.loadSaboresCache();
+      await this.loadBebidasCache();
+      await this.loadBordasCache();
+      await this.loadEstoqueMassa();
+      this.renderPizzaItems();
+      this.renderBebidaItems();
+      const searchInput = root.querySelector("#cliente-search");
+      searchInput.focus();
+      searchInput.addEventListener("input", ()=>{
+        const q = searchInput.value.trim().toLowerCase();
+        const box = root.querySelector("#cliente-suggestions");
+        if(!q){ box.innerHTML=""; return; }
+        const matches = this.clientsCache.filter(c=>
+          c.nome.toLowerCase().includes(q) || c.telefone.includes(q)
+        ).slice(0,8);
+        box.innerHTML = matches.length ? `<div class="suggestions">${matches.map(c=>`
+          <div class="sugg-item" data-id="${c.id}">
+            <div class="sname">${c.nome}</div>
+            <div class="sphone">${c.telefone} · ${c.endereco}</div>
+          </div>
+        `).join("")}</div>` : `<div class="suggestions"><div class="sugg-item" style="color:var(--ink-soft);">Nenhum cliente encontrado</div></div>`;
+        box.querySelectorAll(".sugg-item[data-id]").forEach(item=>{
+          item.addEventListener("click", ()=>{
+            const client = this.clientsCache.find(c=>c.id===item.dataset.id);
+            this.selectClient(client);
+            box.innerHTML = "";
+            searchInput.value = "";
+          });
+        });
+      });
+
+      // client management form
+      root.querySelector("#cliente-foto-input").addEventListener("change", e=>{
+        const file = e.target.files[0];
+        const preview = root.querySelector("#cliente-foto-preview");
+        if(file){
+          preview.innerHTML = `<img src="${URL.createObjectURL(file)}" style="max-width:160px;border-radius:8px;display:block;">`;
+        }
+      });
+      root.querySelector("#client-form").addEventListener("submit", async e=>{
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const data = Object.fromEntries(fd.entries());
+        const id = normalizePhone(data.telefone);
+        const file = root.querySelector("#cliente-foto-input").files[0];
+        if(file && id){
+          toast("Enviando foto...");
+          const url = await uploadClientPhoto(id, file);
+          if(url) data.foto_url = url;
+        }
+        await upsertClient(data);
+        toast(this.editingClientId ? "Cliente atualizado" : "Cliente cadastrado");
+        e.target.reset();
+        root.querySelector("#cliente-foto-preview").innerHTML = "";
+        this.editingClientId = null;
+        root.querySelector("#client-submit-btn").textContent = "Salvar cliente";
+        root.querySelector("#client-cancel-edit").style.display = "none";
+        await this.loadClientsCache();
+        this.refreshClientsList();
+      });
+      root.querySelector("#client-cancel-edit").addEventListener("click", ()=>{
+        root.querySelector("#client-form").reset();
+        root.querySelector("#cliente-foto-preview").innerHTML = "";
+        this.editingClientId = null;
+        root.querySelector("#client-submit-btn").textContent = "Salvar cliente";
+        root.querySelector("#client-cancel-edit").style.display = "none";
+      });
+      root.querySelector("#client-search").addEventListener("input", ()=> this.refreshClientsList());
+
+      root.querySelector("#order-form").addEventListener("submit", async e=>{
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const data = Object.fromEntries(fd.entries());
+
+        const validPizzas = this.pizzaItems.filter(it => it.tamanho && it.sabor1 && it.sabor1.trim());
+        if(!validPizzas.length){
+          toast("Adicione pelo menos uma pizza com tamanho e sabor");
+          return;
+        }
+        const validBebidas = this.bebidaItems.filter(it => it.nome && it.nome.trim());
+
+        const matchedClient = this.clientsCache.find(c => c.id === normalizePhone(data.telefone));
+        data.fotoClienteUrl = matchedClient ? (matchedClient.foto_url||"") : "";
+        const order = await createOrder(data, validPizzas, validBebidas);
+        if(root.querySelector("#salvar-cliente").checked && data.telefone){
+          await upsertClient(data);
+          await this.loadClientsCache();
+        }
+        toast("Comanda #"+order.numero+" enviada");
+        e.target.reset();
+        root.querySelector("#troco-field").style.display="none";
+        root.querySelector("#salvar-cliente").checked = true;
+        this.selectedClientId = null;
+        this.valorManualmenteEditado = false;
+        root.querySelector("#selected-client-box").innerHTML = "";
+        this.pizzaItems = [emptyPizzaItem()];
+        this.bebidaItems = [];
+        this.renderPizzaItems();
+        this.renderBebidaItems();
+        this.recalcValor();
+        this.refresh();
+        await this.loadEstoqueMassa();
+        await this.loadBebidasCache();
+        searchInput.focus();
+      });
+      root.querySelector("#search").addEventListener("input", ()=> this.refresh());
+      await this.refresh();
+    },
+    async loadClientsCache(){
+      this.clientsCache = await getClients();
+    },
+    async loadSaboresCache(){
+      this.saboresCache = await getItems("sabores");
+      const list = this.root.querySelector("#sabores-datalist");
+      if(list) list.innerHTML = this.saboresCache.map(s=>`<option value="${s.nome}">`).join("");
+      this.recalcValor();
+    },
+    async loadBebidasCache(){
+      this.bebidasCache = await getItems("bebidas");
+      const list = this.root.querySelector("#bebidas-datalist");
+      const emEstoque = this.bebidasCache.filter(b => (b.estoque||0) > 0);
+      if(list) list.innerHTML = emEstoque.map(b=>`<option value="${b.nome}">`).join("");
+      this.recalcValor();
+    },
+    async loadBordasCache(){
+      this.bordasCache = await getItems("bordas");
+      const list = this.root.querySelector("#bordas-datalist");
+      if(list) list.innerHTML = this.bordasCache.map(b=>`<option value="${b.nome}">`).join("");
+      this.recalcValor();
+    },
+    async loadEstoqueMassa(){
+      this.estoqueMassa = await getEstoqueMassa();
+      const el = this.root.querySelector("#massa-info");
+      if(el) el.textContent = `🍞 Massa disponível hoje — M: ${this.estoqueMassa.M} · G: ${this.estoqueMassa.G}`;
+    },
+    async initRastreamentoTab(){
+      this.rastreamentoAtivo = await getRastreamentoAtivo();
+      this.updateRastreamentoBtn();
+      if(!this.rastreamentoMap){
+        this.rastreamentoMap = new maplibregl.Map({
+          container: "rastreamento-map",
+          style: "https://tiles.openfreemap.org/styles/liberty",
+          center: [-52.2064, -3.2033],
+          zoom: 12
+        });
+        this.rastreamentoMap.addControl(new maplibregl.NavigationControl());
+      }
+      setTimeout(()=> this.rastreamentoMap.resize(), 50);
+      await this.updateRastreamentoMarker();
+    },
+    updateRastreamentoBtn(){
+      const btn = this.root.querySelector("#toggle-rastreamento-btn");
+      if(!btn) return;
+      if(this.rastreamentoAtivo){
+        btn.textContent = "Desativar rastreamento";
+        btn.classList.remove("primary"); btn.classList.add("danger-btn");
+      } else {
+        btn.textContent = "Ativar rastreamento";
+        btn.classList.remove("danger-btn"); btn.classList.add("primary");
+      }
+    },
+    async updateRastreamentoMarker(){
+      const loc = await getLocalizacaoEntregador();
+      const statusEl = this.root.querySelector("#rastreamento-status");
+      if(!loc || !loc.lat || !loc.lng){
+        if(statusEl) statusEl.textContent = "Ainda sem localização recebida do entregador.";
+        return;
+      }
+      const pos = [loc.lng, loc.lat];
+      if(this.rastreamentoMarker){
+        this.rastreamentoMarker.setLngLat(pos);
+      } else if(this.rastreamentoMap) {
+        const el = document.createElement("div");
+        el.style.fontSize = "28px";
+        el.style.lineHeight = "1";
+        el.style.filter = "drop-shadow(0 2px 3px rgba(0,0,0,.4))";
+        el.textContent = "🛵";
+        this.rastreamentoMarker = new maplibregl.Marker({element: el, anchor: "center"}).setLngLat(pos).addTo(this.rastreamentoMap);
+      }
+      if(this.rastreamentoMap) this.rastreamentoMap.flyTo({ center: pos, zoom: Math.max(this.rastreamentoMap.getZoom(), 15) });
+      if(statusEl){
+        const segs = Math.floor((Date.now() - new Date(loc.updated_at).getTime())/1000);
+        const txt = segs < 60 ? `atualizado há ${segs}s` : `atualizado há ${Math.floor(segs/60)} min`;
+        statusEl.textContent = `📍 ${txt}` + (segs > 120 ? " — pode estar desatualizado" : "");
+      }
+    },
+    renderPizzaItems(){
+      const container = this.root.querySelector("#pizza-items-list");
+      container.innerHTML = this.pizzaItems.map((it,i)=>renderPizzaItemBlock(it,i,this.pizzaItems.length>1)).join("");
+      container.querySelectorAll(".remove-pizza-btn").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          this.pizzaItems.splice(parseInt(btn.dataset.idx,10),1);
+          this.renderPizzaItems();
+          this.recalcValor();
+        });
+      });
+      container.querySelectorAll(".pz-tamanho, .pz-quantidade, .pz-sabor1, .pz-sabor2, .pz-borda").forEach(el=>{
+        el.addEventListener("input", ()=> this.updatePizzaItemField(el));
+        el.addEventListener("change", ()=> this.updatePizzaItemField(el));
+      });
+      container.querySelectorAll(".pz-obs").forEach(el=>{
+        el.addEventListener("input", ()=>{ this.pizzaItems[parseInt(el.dataset.idx,10)].observacoes = el.value; });
+      });
+      container.querySelectorAll(".pz-meio").forEach(el=>{
+        el.addEventListener("change", ()=>{
+          const idx = parseInt(el.dataset.idx,10);
+          this.pizzaItems[idx].meioAMeio = el.checked;
+          container.querySelector(`.pz-sabor2-field[data-idx="${idx}"]`).style.display = el.checked ? "block" : "none";
+          this.recalcValor();
+        });
+      });
+    },
+    updatePizzaItemField(el){
+      const idx = parseInt(el.dataset.idx,10);
+      const item = this.pizzaItems[idx];
+      if(el.classList.contains("pz-tamanho")) item.tamanho = el.value;
+      else if(el.classList.contains("pz-quantidade")) item.quantidade = parseInt(el.value)||1;
+      else if(el.classList.contains("pz-sabor1")) item.sabor1 = el.value;
+      else if(el.classList.contains("pz-sabor2")) item.sabor2 = el.value;
+      else if(el.classList.contains("pz-borda")) item.borda = el.value;
+      this.recalcValor();
+    },
+    renderBebidaItems(){
+      const container = this.root.querySelector("#bebida-items-list");
+      container.innerHTML = this.bebidaItems.map((it,i)=>renderBebidaItemBlock(it,i)).join("");
+      container.querySelectorAll(".remove-bebida-btn").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          this.bebidaItems.splice(parseInt(btn.dataset.idx,10),1);
+          this.renderBebidaItems();
+          this.recalcValor();
+        });
+      });
+      container.querySelectorAll(".bb-nome, .bb-quantidade").forEach(el=>{
+        el.addEventListener("input", ()=>{
+          const idx = parseInt(el.dataset.idx,10);
+          const item = this.bebidaItems[idx];
+          if(el.classList.contains("bb-nome")) item.nome = el.value;
+          else item.quantidade = parseInt(el.value)||1;
+          this.recalcValor();
+        });
+      });
+    },
+    recalcValor(){
+      const form = this.root.querySelector("#order-form");
+      if(!form) return;
+      let total = 0;
+      this.pizzaItems.forEach((it,i)=>{
+        it.valor = pizzaItemPrice(it, this.saboresCache, this.bordasCache);
+        total += it.valor;
+        const span = this.root.querySelector(`.item-block[data-idx="${i}"] .pz-subtotal`);
+        if(span) span.textContent = fmtMoney(it.valor);
+      });
+      this.bebidaItems.forEach((it,i)=>{
+        it.valor = bebidaItemPrice(it, this.bebidasCache);
+        total += it.valor;
+        const blocks = this.root.querySelectorAll("#bebida-items-list .item-block");
+        if(blocks[i]){ const span = blocks[i].querySelector(".bb-subtotal"); if(span) span.textContent = fmtMoney(it.valor); }
+      });
+      if(!this.valorManualmenteEditado){
+        form.querySelector('[name="valor"]').value = total.toFixed(2);
+      }
+    },
+    selectClient(client){
+      this.selectedClientId = client.id;
+      const form = this.root.querySelector("#order-form");
+      form.querySelector('[name="nome"]').value = client.nome;
+      form.querySelector('[name="telefone"]').value = client.telefone;
+      form.querySelector('[name="endereco"]').value = client.endereco;
+      form.querySelector('[name="link_maps"]').value = client.link_maps || "";
+      this.root.querySelector("#selected-client-box").innerHTML = `
+        <div class="selected-client">
+          <span>Cliente: ${client.nome}</span>
+          <button type="button" id="clear-client-btn">trocar</button>
+        </div>
+      `;
+      this.root.querySelector("#clear-client-btn").addEventListener("click", ()=>{
+        this.selectedClientId = null;
+        form.querySelector('[name="nome"]').value = "";
+        form.querySelector('[name="telefone"]').value = "";
+        form.querySelector('[name="endereco"]').value = "";
+        form.querySelector('[name="link_maps"]').value = "";
+        this.root.querySelector("#selected-client-box").innerHTML = "";
+      });
+    },
+    async refreshClientsList(){
+      const q = (this.root.querySelector("#client-search")?.value || "").trim().toLowerCase();
+      const filtered = q ? this.clientsCache.filter(c=>
+        c.nome.toLowerCase().includes(q) || c.telefone.includes(q)
+      ) : this.clientsCache;
+      const listEl = this.root.querySelector("#clients-list");
+      if(!filtered.length){
+        listEl.innerHTML = '<div class="empty">Nenhum cliente cadastrado ainda.</div>';
+        return;
+      }
+      listEl.innerHTML = filtered.map(c=>`
+        <div class="client-row">
+          ${c.foto_url ? `<img src="${c.foto_url}" class="client-thumb" alt="Foto da casa">` : ""}
+          <div class="info">
+            <div class="name">${c.nome}</div>
+            <div class="sub">${c.telefone} · ${c.endereco}</div>
+          </div>
+          <div class="actions">
+            <button class="ghost edit-client-btn" data-id="${c.id}">Editar</button>
+            <button class="danger-text del-client-btn" data-id="${c.id}">Excluir</button>
+          </div>
+        </div>
+      `).join("");
+      listEl.querySelectorAll(".edit-client-btn").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const client = this.clientsCache.find(c=>c.id===btn.dataset.id);
+          const form = this.root.querySelector("#client-form");
+          form.querySelector('[name="nome"]').value = client.nome;
+          form.querySelector('[name="telefone"]').value = client.telefone;
+          form.querySelector('[name="endereco"]').value = client.endereco;
+          form.querySelector('[name="link_maps"]').value = client.link_maps || "";
+          form.querySelector('[name="observacoes"]').value = client.observacoes || "";
+          this.root.querySelector("#cliente-foto-preview").innerHTML = client.foto_url
+            ? `<img src="${client.foto_url}" style="max-width:160px;border-radius:8px;display:block;">` : "";
+          this.editingClientId = client.id;
+          this.root.querySelector("#client-submit-btn").textContent = "Atualizar cliente";
+          this.root.querySelector("#client-cancel-edit").style.display = "inline-block";
+          form.scrollIntoView({behavior:"smooth", block:"start"});
+        });
+      });
+      listEl.querySelectorAll(".del-client-btn").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          const client = this.clientsCache.find(c=>c.id===btn.dataset.id);
+          if(confirm("Excluir o cadastro de "+client.nome+"?")){
+            await deleteClient(client.id);
+            await this.loadClientsCache();
+            this.refreshClientsList();
+          }
+        });
+      });
+    },
+    async refresh(){
+      const orders = await getOrdersForDate(todayStr());
+      const q = (this.root.querySelector("#search")?.value || "").trim().toLowerCase();
+      const filtered = q ? orders.filter(o =>
+        o.nome.toLowerCase().includes(q) || String(o.numero).includes(q)
+      ) : orders;
+      const listEl = this.root.querySelector("#orders-list");
+      if(!filtered.length){
+        listEl.innerHTML = '<div class="empty">Nenhum pedido ainda hoje.</div>';
+        return;
+      }
+      const rows = filtered.slice().reverse().map(o => `
+        <tr data-numero="${o.numero}">
+          <td class="num">#${o.numero}</td>
+          <td>${fmtTime(o.horarios.pedido)}</td>
+          <td>${orderPizzasSummary(o)}${o.bebidas && o.bebidas.length ? `<br><span style="color:var(--ink-soft)">🥤 ${orderBebidasSummary(o)}</span>` : ""}</td>
+          <td>${o.nome}</td>
+          <td><span class="status-pill ${statusClass(o.status)}">${o.status}</span></td>
+          <td>${o.pagamento==="Pix" ? (
+            o.pixConfirmado
+              ? `<span class="status-pill status-Pronta">Pix ok ✓</span>`
+              : `<button class="warn confirm-pix-btn" data-numero="${o.numero}" style="padding:6px 10px;font-size:13px;">Confirmar Pix</button>`
+          ) : ""}</td>
+          <td>${o.status==="Pendente" ? `
+            <button class="ghost edit-btn" data-numero="${o.numero}" style="padding:6px 10px;font-size:13px;">Editar</button>
+            <button class="danger-text cancel-btn" data-numero="${o.numero}">Cancelar</button>
+          ` : ""}</td>
+        </tr>
+      `).join("");
+      listEl.innerHTML = `
+        <table class="orders">
+          <thead><tr><th>Nº</th><th>Hora</th><th>Pedido</th><th>Cliente</th><th>Status</th><th>Pix</th><th></th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+      listEl.querySelectorAll(".confirm-pix-btn").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          const numero = parseInt(btn.dataset.numero,10);
+          const order = await getOrderByNumero(todayStr(), numero);
+          order.pixConfirmado = true;
+          await saveOrder(order);
+          toast("Pix da comanda #"+numero+" confirmado — liberada pro entregador");
+          this.refresh();
+        });
+      });
+      listEl.querySelectorAll(".cancel-btn").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          const numero = parseInt(btn.dataset.numero,10);
+          if(confirm("Tem certeza que quer cancelar a comanda #"+numero+"?")){
+            const order = await getOrderByNumero(todayStr(), numero);
+            order.status = "Cancelada";
+            await saveOrder(order);
+            await restockOrder(order);
+            toast("Comanda #"+numero+" cancelada");
+            this.refresh();
+            await this.loadEstoqueMassa();
+            await this.loadBebidasCache();
+          }
+        });
+      });
+      listEl.querySelectorAll(".edit-btn").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          const numero = parseInt(btn.dataset.numero,10);
+          const order = await getOrderByNumero(todayStr(), numero);
+          this.openEditModal(order);
+        });
+      });
+    },
+    openEditModal(order){
+      const holder = this.root.querySelector("#modal-holder");
+      holder.innerHTML = `
+        <div class="modal-backdrop" id="modal-bg">
+          <div class="modal">
+            <h3>Editar comanda #${order.numero}</h3>
+            <p style="font-size:13px;color:var(--ink-soft);margin-top:-8px;">Pizzas e bebidas não podem ser editadas aqui — se precisar mudar, cancele e lance de novo. Dá pra ajustar os dados do cliente e pagamento.</p>
+            <form id="edit-form">
+              <div class="field"><label>Nome</label><input name="nome" value="${order.nome}"></div>
+              <div class="field"><label>Telefone</label><input name="telefone" value="${order.telefone}"></div>
+              <div class="field"><label>Endereço</label><textarea name="endereco" rows="2">${order.endereco}</textarea></div>
+              <div class="field"><label>Link do Google Maps (opcional)</label><input name="linkMaps" value="${order.linkMaps||""}" placeholder="https://maps.app.goo.gl/..."></div>
+              <div class="field"><label>Valor total do pedido (R$)</label><input name="valor" type="number" step="0.01" min="0" value="${order.valor||0}"></div>
+              <div class="field"><label>Pagamento</label>
+                <select name="pagamento">
+                  ${["Dinheiro","Cartão","Pix"].map(t=>`<option ${order.pagamento===t?"selected":""}>${t}</option>`).join("")}
+                </select>
+              </div>
+              <div class="field"><label>Troco para quanto?</label><input name="troco" value="${order.troco||""}"></div>
+              <div class="actions">
+                <button type="submit" class="primary">Salvar</button>
+                <button type="button" class="ghost" id="cancel-edit">Fechar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+      holder.querySelector("#cancel-edit").addEventListener("click", ()=> holder.innerHTML="");
+      holder.querySelector("#modal-bg").addEventListener("click", e=>{ if(e.target.id==="modal-bg") holder.innerHTML=""; });
+      holder.querySelector("#edit-form").addEventListener("submit", async e=>{
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const data = Object.fromEntries(fd.entries());
+        data.valor = parseFloat(data.valor)||0;
+        Object.assign(order, data);
+        await saveOrder(order);
+        holder.innerHTML = "";
+        toast("Comanda #"+order.numero+" atualizada");
+        this.refresh();
+      });
+    }
+  };
+
+  /* ================= PRODUCAO ================= */
+  const Producao = {
+    root:null, knownIds:new Set(), firstLoad:true, tickTimer:null,
+    async render(root){
+      this.root = root;
+      root.innerHTML = `
+        <header class="topbar">
+          <div><h1>👨‍🍳 Produção</h1><div class="tag">Fila da cozinha</div></div>
+          <a class="home-link" href="#/">trocar tela</a>
+        </header>
+        <main>
+          <h2>Aguardando <span class="count-badge" id="count-pendentes">0</span></h2>
+          <div id="col-pendentes"></div>
+        </main>
+      `;
+      await this.refresh();
+      clearInterval(this.tickTimer);
+      this.tickTimer = setInterval(()=> this.tick(), 1000);
+    },
+    tick(){
+      if(!this.root) return;
+      this.root.querySelectorAll(".stopwatch").forEach(el=>{
+        const start = el.dataset.start;
+        if(!start) return;
+        const secs = Math.max(0, Math.floor((Date.now() - new Date(start).getTime())/1000));
+        const h = Math.floor(secs/3600), m = Math.floor((secs%3600)/60), s = secs%60;
+        el.textContent = h>0
+          ? `${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`
+          : `${m}:${String(s).padStart(2,"0")}`;
+        const card = el.closest(".order-card");
+        if(card) card.classList.toggle("late", secs > 15*60);
+      });
+    },
+    async refresh(){
+      const orders = await getOrdersForDate(todayStr());
+      const pendentes = orders.filter(o=>o.status==="Pendente");
+
+      const currentIds = new Set(pendentes.map(o=>o.numero));
+      if(!this.firstLoad){
+        const isNew = [...currentIds].some(id => !this.knownIds.has(id));
+        if(isNew) beep();
+      }
+      this.knownIds = currentIds;
+      this.firstLoad = false;
+
+      this.root.querySelector("#count-pendentes").textContent = pendentes.length;
+
+      const pendEl = this.root.querySelector("#col-pendentes");
+      pendEl.innerHTML = pendentes.length ? pendentes.map(o=>`
+        <div class="order-card">
+          <div class="card-header">
+            <div class="numero">#${o.numero}</div>
+            <div class="timer-pill">⏱ <span class="stopwatch num" data-start="${o.horarios.pedido}">0:00</span></div>
+          </div>
+          ${o.itens.map(it=>`
+            <div class="pizza-item-line">
+              <div class="flavor-line">${it.tamanho} · ${itemFlavorLabel(it)}${it.quantidade>1?" (x"+it.quantidade+")":""}</div>
+              ${it.borda ? `<div class="meta">Borda: ${it.borda}</div>` : ""}
+              ${it.observacoes ? `<div class="obs">${it.observacoes}</div>` : ""}
+            </div>
+          `).join("")}
+          ${o.bebidas.length ? `<div class="meta">🥤 ${orderBebidasSummary(o)}</div>` : ""}
+          <div class="footer">${o.nome} · ${fmtMoney(o.valor)}</div>
+          <div class="actions">
+            <button class="success ready-btn" data-numero="${o.numero}">Marcar como pronta</button>
+            <button class="danger-btn cancel-btn" data-numero="${o.numero}">Cancelar</button>
+          </div>
+        </div>
+      `).join("") : '<div class="empty">Nenhum pedido aguardando.</div>';
+
+      pendEl.querySelectorAll(".ready-btn").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          const numero = parseInt(btn.dataset.numero,10);
+          const order = await getOrderByNumero(todayStr(), numero);
+          order.status = "Pronta";
+          order.horarios.pronta = new Date().toISOString();
+          await saveOrder(order);
+          this.refresh();
+        });
+      });
+      pendEl.querySelectorAll(".cancel-btn").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          const numero = parseInt(btn.dataset.numero,10);
+          if(confirm("Tem certeza que quer cancelar a comanda #"+numero+"?")){
+            const order = await getOrderByNumero(todayStr(), numero);
+            order.status = "Cancelada";
+            await saveOrder(order);
+            await restockOrder(order);
+            this.refresh();
+          }
+        });
+      });
+      this.tick();
+    }
+  };
+
+  /* ================= ENTREGADOR ================= */
+  const Entregador = {
+    root:null, tickTimer:null, bebidaConfirmada:new Set(), fotosAbertas:new Set(), trackingInterval:null, locked:false,
+    async render(root, locked){
+      this.root = root;
+      this.locked = !!locked;
+      this.bebidaConfirmada = new Set();
+      this.fotosAbertas = new Set();
+      root.innerHTML = `
+        <header class="topbar">
+          <div><h1>🛵 Entregador</h1><div class="tag">Rota de entregas</div></div>
+          ${this.locked ? "" : '<a class="home-link" href="#/">trocar tela</a>'}
+        </header>
+        <main>
+          <div id="device-confirm-banner" class="panel" style="display:none;margin-bottom:14px;">
+            <p style="margin:0 0 10px;font-weight:600;">Este é o celular do entregador?</p>
+            <p style="margin:0 0 12px;font-size:13px;color:var(--ink-soft);">Confirme só se este aparelho vai ficar com o entregador na rua — é ele que vai enviar a localização pra atendente.</p>
+            <div class="row">
+              <button type="button" class="primary" id="device-confirm-yes" style="flex:1;">Sim, sou o entregador</button>
+              <button type="button" class="ghost" id="device-confirm-no">Não</button>
+            </div>
+          </div>
+          <div id="tracking-status" class="tag" style="margin-bottom:14px;"></div>
+          <div class="deliv-section">
+            <h2>Prontas para sair</h2>
+            <div id="col-prontas"></div>
+          </div>
+          <div class="deliv-section">
+            <h2>Em rota</h2>
+            <div id="col-rota"></div>
+          </div>
+          <div class="deliv-section">
+            <h2>Entregues hoje</h2>
+            <div id="col-historico"></div>
+          </div>
+        </main>
+      `;
+      await this.refresh();
+      clearInterval(this.tickTimer);
+      this.tickTimer = setInterval(()=> this.tick(), 1000);
+
+      const jaConfirmado = localStorage.getItem("entregador_device_confirmado") === "1";
+      if(jaConfirmado){
+        await this.onTrackingConfigChange();
+      } else {
+        root.querySelector("#device-confirm-banner").style.display = "block";
+        root.querySelector("#device-confirm-yes").addEventListener("click", async ()=>{
+          localStorage.setItem("entregador_device_confirmado", "1");
+          root.querySelector("#device-confirm-banner").style.display = "none";
+          await this.onTrackingConfigChange();
+        });
+        root.querySelector("#device-confirm-no").addEventListener("click", ()=>{
+          root.querySelector("#device-confirm-banner").style.display = "none";
+        });
+      }
+    },
+    async onTrackingConfigChange(){
+      if(localStorage.getItem("entregador_device_confirmado") !== "1") return;
+      const ativo = await getRastreamentoAtivo();
+      const statusEl = this.root.querySelector("#tracking-status");
+      if(ativo){
+        if(statusEl) statusEl.textContent = "📍 Compartilhando localização com a atendente";
+        this.startTracking();
+      } else {
+        if(statusEl) statusEl.textContent = "";
+        this.stopTracking();
+      }
+    },
+    startTracking(){
+      if(this.trackingInterval) return;
+      const statusEl = ()=> this.root ? this.root.querySelector("#tracking-status") : null;
+      if(!window.isSecureContext){
+        const el = statusEl();
+        if(el) el.textContent = "⚠️ Rastreamento precisa que o app esteja publicado com link https:// (não funciona abrindo o arquivo direto)";
+        return;
+      }
+      if(!navigator.geolocation){
+        const el = statusEl();
+        if(el) el.textContent = "⚠️ Esse navegador não suporta localização.";
+        return;
+      }
+      const sendLocation = ()=>{
+        navigator.geolocation.getCurrentPosition(
+          pos => {
+            upsertLocalizacaoEntregador(pos.coords.latitude, pos.coords.longitude);
+            const el = statusEl();
+            if(el) el.textContent = "📍 Compartilhando localização com a atendente";
+          },
+          err => {
+            console.error("geolocation error", err);
+            const el = statusEl();
+            if(el) el.textContent = err.code === 1
+              ? "⚠️ Permissão de localização negada — ative nas configurações do navegador"
+              : "⚠️ Não foi possível obter a localização agora";
+          },
+          { enableHighAccuracy:true, maximumAge:3000, timeout:8000 }
+        );
+      };
+      sendLocation();
+      this.trackingInterval = setInterval(sendLocation, 5000);
+    },
+    stopTracking(){
+      if(this.trackingInterval){ clearInterval(this.trackingInterval); this.trackingInterval = null; }
+    },
+    tick(){
+      if(!this.root) return;
+      this.root.querySelectorAll(".stopwatch").forEach(el=>{
+        const start = el.dataset.start;
+        if(!start) return;
+        const secs = Math.max(0, Math.floor((Date.now() - new Date(start).getTime())/1000));
+        const h = Math.floor(secs/3600), m = Math.floor((secs%3600)/60), s = secs%60;
+        el.textContent = h>0
+          ? `${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`
+          : `${m}:${String(s).padStart(2,"0")}`;
+        const card = el.closest(".deliv-card");
+        if(card) card.classList.toggle("late", secs > 15*60);
+      });
+    },
+    async refresh(){
+      const orders = await getOrdersForDate(todayStr());
+      const prontas = orders.filter(o=>o.status==="Pronta");
+      const emRota = orders.filter(o=>o.status==="Saiu para entrega");
+      const entregues = orders.filter(o=>o.status==="Entregue");
+
+      const mapsUrl = (o)=> o.linkMaps ? o.linkMaps : "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(o.endereco);
+      const waLink = (telefone)=>{
+        let digits = (telefone||"").replace(/\D/g,"");
+        if(digits.length <= 11) digits = "55"+digits;
+        return `https://wa.me/${digits}`;
+      };
+
+      const prontasEl = this.root.querySelector("#col-prontas");
+      prontasEl.innerHTML = prontas.length ? prontas.map(o=>{
+        const precisaBebida = o.bebidas && o.bebidas.length > 0;
+        const bebidaOk = !precisaBebida || this.bebidaConfirmada.has(o.numero);
+        const precisaPix = o.pagamento === "Pix" && !o.pixConfirmado;
+        const liberado = bebidaOk && !precisaPix;
+        const addrLink = liberado
+          ? `<a class="addr" href="${mapsUrl(o)}" target="_blank" rel="noopener" style="display:block;text-decoration:none;color:var(--ink);">${o.endereco} ↗</a>`
+          : `<div class="addr addr-locked">🔒 ${o.endereco}</div>`;
+        const mapsBtn = liberado
+          ? `<a href="${mapsUrl(o)}" target="_blank" rel="noopener">Abrir no Maps</a>`
+          : `<span class="link-disabled">Abrir no Maps</span>`;
+        return `
+        <div class="deliv-card">
+          <div class="card-header">
+            <div class="numero">#${o.numero}</div>
+            <div class="timer-pill">⏱ <span class="stopwatch num" data-start="${o.horarios.pronta}">0:00</span></div>
+          </div>
+          ${addrLink}
+          <div class="meta">${o.telefone}${precisaBebida ? " · 🥤 "+orderBebidasSummary(o) : ""}</div>
+          <span class="pay">${fmtMoney(o.valor)} · ${o.pagamento}${o.troco?" · troco p/ "+o.troco:""}</span>
+          ${precisaPix ? `<div class="pix-lock-note">⏳ Não liberado — aguardando confirmação do Pix pela atendente</div>` : ""}
+          ${precisaBebida ? `
+          <label class="bebida-check">
+            <input type="checkbox" class="bebida-confirm-cb" data-numero="${o.numero}" ${bebidaOk?"checked":""}>
+            🥤 Peguei a(s) bebida(s): ${orderBebidasSummary(o)}
+          </label>` : ""}
+          <div class="footer">${o.nome}</div>
+          ${o.fotoClienteUrl ? `<div class="foto-box" data-numero="${o.numero}" style="display:${this.fotosAbertas.has(o.numero)?'block':'none'};"><img src="${o.fotoClienteUrl}" class="casa-thumb" alt="Foto da casa"></div>` : ""}
+          <div class="linkrow">
+            ${mapsBtn}
+            <a href="${waLink(o.telefone)}" target="_blank" rel="noopener">WhatsApp</a>
+            ${o.fotoClienteUrl ? `<button type="button" class="ghost ver-foto-btn" data-numero="${o.numero}">${this.fotosAbertas.has(o.numero)?'Ocultar foto':'Ver foto'}</button>` : ""}
+          </div>
+          <div class="actions">
+            <button class="primary out-btn" data-numero="${o.numero}" ${liberado?"":"disabled title=\"Confirme a bebida e o Pix antes de sair\""}>Estou saindo para entrega</button>
+          </div>
+        </div>
+      `;}).join("") : '<div class="empty">Nenhuma comanda pronta agora.</div>';
+
+      const rotaEl = this.root.querySelector("#col-rota");
+      rotaEl.innerHTML = emRota.length ? emRota.map(o=>`
+        <div class="deliv-card">
+          <div class="card-header">
+            <div class="numero">#${o.numero}</div>
+            <div class="timer-pill">⏱ <span class="stopwatch num" data-start="${o.horarios.saida}">0:00</span></div>
+          </div>
+          <a class="addr" href="${mapsUrl(o)}" target="_blank" rel="noopener" style="display:block;text-decoration:none;color:var(--ink);">${o.endereco} ↗</a>
+          <div class="meta">${o.telefone}${o.bebidas && o.bebidas.length ? " · 🥤 "+orderBebidasSummary(o) : ""}</div>
+          <span class="pay">${fmtMoney(o.valor)} · ${o.pagamento}${o.troco?" · troco p/ "+o.troco:""}</span>
+          <div class="footer">${o.nome}</div>
+          ${o.fotoClienteUrl ? `<div class="foto-box" data-numero="${o.numero}" style="display:${this.fotosAbertas.has(o.numero)?'block':'none'};"><img src="${o.fotoClienteUrl}" class="casa-thumb" alt="Foto da casa"></div>` : ""}
+          <div class="linkrow">
+            <a href="${mapsUrl(o)}" target="_blank" rel="noopener">Abrir no Maps</a>
+            <a href="${waLink(o.telefone)}" target="_blank" rel="noopener">WhatsApp</a>
+            ${o.fotoClienteUrl ? `<button type="button" class="ghost ver-foto-btn" data-numero="${o.numero}">${this.fotosAbertas.has(o.numero)?'Ocultar foto':'Ver foto'}</button>` : ""}
+          </div>
+          <div class="actions">
+            <button class="success delivered-btn" data-numero="${o.numero}">Entregue</button>
+          </div>
+        </div>
+      `).join("") : '<div class="empty">Ninguém em rota agora.</div>';
+
+      const histEl = this.root.querySelector("#col-historico");
+      histEl.innerHTML = entregues.length ? entregues.slice().reverse().map(o=>`
+        <div class="deliv-card">
+          <div class="numero">#${o.numero}</div>
+          <div class="addr">${o.endereco}</div>
+          <div class="footer">${o.nome} · entregue às ${fmtTime(o.horarios.entrega)}</div>
+        </div>
+      `).join("") : '<div class="empty">Nenhuma entrega concluída ainda.</div>';
+
+      this.tick();
+
+      this.root.querySelectorAll(".ver-foto-btn").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const numero = parseInt(btn.dataset.numero,10);
+          const box = this.root.querySelector(`.foto-box[data-numero="${numero}"]`);
+          if(!box) return;
+          const showing = box.style.display !== "none";
+          if(showing){
+            box.style.display = "none";
+            btn.textContent = "Ver foto";
+            this.fotosAbertas.delete(numero);
+          } else {
+            box.style.display = "block";
+            btn.textContent = "Ocultar foto";
+            this.fotosAbertas.add(numero);
+          }
+        });
+      });
+
+      prontasEl.querySelectorAll(".bebida-confirm-cb").forEach(cb=>{
+        cb.addEventListener("change", ()=>{
+          const numero = parseInt(cb.dataset.numero,10);
+          if(cb.checked) this.bebidaConfirmada.add(numero);
+          else this.bebidaConfirmada.delete(numero);
+          this.refresh();
+        });
+      });
+      prontasEl.querySelectorAll(".out-btn").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          const numero = parseInt(btn.dataset.numero,10);
+          const order = await getOrderByNumero(todayStr(), numero);
+          order.status = "Saiu para entrega";
+          order.horarios.saida = new Date().toISOString();
+          await saveOrder(order);
+          this.refresh();
+        });
+      });
+      rotaEl.querySelectorAll(".delivered-btn").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          const numero = parseInt(btn.dataset.numero,10);
+          btn.disabled = true;
+          btn.textContent = "Pegando localização...";
+          const coords = await new Promise(resolve=>{
+            if(!navigator.geolocation){ resolve(null); return; }
+            navigator.geolocation.getCurrentPosition(
+              pos => resolve({lat: pos.coords.latitude, lng: pos.coords.longitude}),
+              () => resolve(null),
+              { enableHighAccuracy:true, timeout:8000, maximumAge:5000 }
+            );
+          });
+          const order = await getOrderByNumero(todayStr(), numero);
+          order.status = "Entregue";
+          order.horarios.entrega = new Date().toISOString();
+          if(coords){ order.entregaLat = coords.lat; order.entregaLng = coords.lng; }
+          await saveOrder(order);
+          this.refresh();
+        });
+      });
+    }
+  };
+
+  /* ================= ADMINISTRACAO ================= */
+  function fmtDuration(startIso, endIso){
+    if(!startIso || !endIso) return "—";
+    const mins = Math.round((new Date(endIso) - new Date(startIso))/60000);
+    if(mins < 0) return "—";
+    if(mins < 60) return mins+" min";
+    const h = Math.floor(mins/60), m = mins%60;
+    return h+"h "+String(m).padStart(2,"0")+"min";
+  }
+  function avgDuration(orders, fromKey, toKey){
+    const diffs = orders
+      .map(o => [o.horarios[fromKey], o.horarios[toKey]])
+      .filter(([a,b]) => a && b)
+      .map(([a,b]) => (new Date(b)-new Date(a))/60000);
+    if(!diffs.length) return null;
+    const avg = diffs.reduce((s,v)=>s+v,0)/diffs.length;
+    return Math.round(avg);
+  }
+  function fmtMinutes(mins){
+    if(mins === null || mins === undefined) return "—";
+    if(mins < 60) return mins+" min";
+    const h = Math.floor(mins/60), m = Math.round(mins%60);
+    return h+"h "+String(m).padStart(2,"0")+"min";
+  }
+
+  const Administracao = {
+    root:null, period:"dia",
+    async render(root){
+      this.root = root;
+      this.period = "dia";
+      root.innerHTML = `
+        <header class="topbar">
+          <div><h1>📊 Administração</h1><div class="tag">Histórico e tempo de cada fase</div></div>
+          <a class="home-link" href="#/">trocar tela</a>
+        </header>
+        <main>
+          <div class="admin-datebar">
+            <label style="margin:0;">Data de referência:</label>
+            <input type="date" id="admin-date" value="${todayStr()}">
+            <div class="tabs" style="margin:0;border-bottom:none;">
+              <button type="button" class="tab-btn active" data-period="dia">Dia</button>
+              <button type="button" class="tab-btn" data-period="semana">Semana</button>
+              <button type="button" class="tab-btn" data-period="mes">Mês</button>
+            </div>
+          </div>
+          <div id="admin-range-label" class="tag" style="margin:-10px 0 16px;"></div>
+          <div class="admin-summary" id="admin-summary"></div>
+          <div class="panel">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+              <h2 id="admin-table-title">Comandas do período</h2>
+              <button type="button" class="ghost" id="toggle-admin-view-btn">🗺️ Ver mapa de entregas</button>
+            </div>
+            <div id="admin-table"></div>
+            <div id="admin-map-wrap" style="display:none;">
+              <div id="admin-map" style="height:520px;border-radius:10px;overflow:hidden;"></div>
+              <div id="admin-map-status" class="tag" style="margin-top:8px;"></div>
+            </div>
+          </div>
+        </main>
+      `;
+      root.querySelector("#admin-date").addEventListener("change", ()=> this.refresh());
+      root.querySelectorAll(".tab-btn").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          root.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+          btn.classList.add("active");
+          this.period = btn.dataset.period;
+          this.refresh();
+        });
+      });
+      root.querySelector("#toggle-admin-view-btn").addEventListener("click", ()=>{
+        this.view = this.view === "mapa" ? "tabela" : "mapa";
+        this.applyView();
+        this.refresh();
+      });
+      this.view = "tabela";
+      await this.refresh();
+    },
+    applyView(){
+      const tableEl = this.root.querySelector("#admin-table");
+      const mapWrap = this.root.querySelector("#admin-map-wrap");
+      const btn = this.root.querySelector("#toggle-admin-view-btn");
+      if(this.view === "mapa"){
+        tableEl.style.display = "none";
+        mapWrap.style.display = "";
+        btn.textContent = "📋 Ver comandas";
+      } else {
+        tableEl.style.display = "";
+        mapWrap.style.display = "none";
+        btn.textContent = "🗺️ Ver mapa de entregas";
+      }
+    },
+    getRange(){
+      const date = this.root.querySelector("#admin-date").value || todayStr();
+      if(this.period === "semana") return weekRange(date);
+      if(this.period === "mes") return monthRange(date);
+      return [date, date];
+    },
+    async refresh(){
+      const [start, end] = this.getRange();
+      const orders = start === end ? await getOrdersForDate(start) : await getOrdersForRange(start, end);
+
+      const labelEl = this.root.querySelector("#admin-range-label");
+      labelEl.textContent = start === end
+        ? "Mostrando o dia "+fmtDateBR(start)
+        : "Mostrando de "+fmtDateBR(start)+" até "+fmtDateBR(end);
+      this.root.querySelector("#admin-table-title").textContent =
+        this.period === "dia" ? "Comandas do dia" : this.period === "semana" ? "Comandas da semana" : "Comandas do mês";
+
+      const total = orders.length;
+      const cancelados = orders.filter(o=>o.status==="Cancelada").length;
+      const validos = orders.filter(o=>o.status!=="Cancelada");
+      const entregues = orders.filter(o=>o.status==="Entregue");
+      const avgProducao = avgDuration(entregues, "pedido", "pronta");
+      const avgEntrega = avgDuration(entregues, "saida", "entrega");
+      const avgTotal = avgDuration(entregues, "pedido", "entrega");
+      const faturamento = validos.reduce((s,o)=> s+(Number(o.valor)||0), 0);
+      const ticketMedio = validos.length ? faturamento/validos.length : 0;
+      const periodoLabel = this.period === "dia" ? "no dia" : this.period === "semana" ? "na semana" : "no mês";
+
+      this.root.querySelector("#admin-summary").innerHTML = `
+        <div class="stat-card"><div class="val num">${total}</div><div class="label">pedidos ${periodoLabel}</div></div>
+        <div class="stat-card"><div class="val num">${cancelados}</div><div class="label">cancelados</div></div>
+        <div class="stat-card"><div class="val num">${fmtMoney(faturamento)}</div><div class="label">faturamento ${periodoLabel}</div></div>
+        <div class="stat-card"><div class="val num">${fmtMoney(ticketMedio)}</div><div class="label">ticket médio</div></div>
+        <div class="stat-card"><div class="val num">${fmtMinutes(avgProducao)}</div><div class="label">média de produção (pedido→pronta)</div></div>
+        <div class="stat-card"><div class="val num">${fmtMinutes(avgEntrega)}</div><div class="label">média de entrega (saída→entregue)</div></div>
+        <div class="stat-card"><div class="val num">${fmtMinutes(avgTotal)}</div><div class="label">média total (pedido→entregue)</div></div>
+      `;
+
+      const tableEl = this.root.querySelector("#admin-table");
+      if(!orders.length){
+        tableEl.innerHTML = '<div class="empty">Nenhum pedido nesse período.</div>';
+        if(this.view === "mapa") await this.renderMap([]);
+        return;
+      }
+      const showDayCol = start !== end;
+      const rows = orders.map(o => `
+        <tr>
+          <td class="num">#${o.numero}</td>
+          ${showDayCol ? `<td class="num">${fmtDateBR(o.date)}</td>` : ""}
+          <td>${o.nome}</td>
+          <td>${orderPizzasSummary(o)}${o.bebidas && o.bebidas.length ? `<br><span class="dim">🥤 ${orderBebidasSummary(o)}</span>` : ""}</td>
+          <td class="num">${fmtMoney(o.valor)}</td>
+          <td><span class="status-pill ${statusClass(o.status)}">${o.status}</span></td>
+          <td class="num">${fmtTime(o.horarios.pedido)}</td>
+          <td class="num">${fmtTime(o.horarios.pronta)}</td>
+          <td class="num">${fmtTime(o.horarios.saida)}</td>
+          <td class="num">${fmtTime(o.horarios.entrega)}</td>
+          <td class="dim">${fmtDuration(o.horarios.pedido, o.horarios.pronta)}</td>
+          <td class="dim">${fmtDuration(o.horarios.saida, o.horarios.entrega)}</td>
+          <td><strong>${fmtDuration(o.horarios.pedido, o.horarios.entrega)}</strong></td>
+        </tr>
+      `).join("");
+      tableEl.innerHTML = `
+        <div style="overflow-x:auto;">
+        <table class="orders">
+          <thead><tr>
+            <th>Nº</th>${showDayCol ? "<th>Dia</th>" : ""}<th>Cliente</th><th>Pedido</th><th>Valor</th><th>Status</th>
+            <th>Pedido</th><th>Pronta</th><th>Saída</th><th>Entregue</th>
+            <th>Produção</th><th>Entrega</th><th>Total</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+        </div>
+      `;
+      if(this.view === "mapa") await this.renderMap(entregues);
+    },
+    async renderMap(entregues){
+      const statusEl = this.root.querySelector("#admin-map-status");
+      const pontos = entregues.filter(o => o.entregaLat != null && o.entregaLng != null);
+      if(!this.adminMap){
+        this.adminMap = new maplibregl.Map({
+          container: "admin-map",
+          style: "https://tiles.openfreemap.org/styles/liberty",
+          center: [-52.2064, -3.2033],
+          zoom: 12
+        });
+        this.adminMap.addControl(new maplibregl.NavigationControl());
+      }
+      setTimeout(()=> this.adminMap.resize(), 50);
+      this.adminMapMarkers = this.adminMapMarkers || [];
+      this.adminMapMarkers.forEach(m=>m.remove());
+      this.adminMapMarkers = [];
+      if(!pontos.length){
+        statusEl.textContent = entregues.length
+          ? "Nenhuma dessas entregas tem localização salva (só passam a ter a partir de agora, quando o entregador aperta Entregue)."
+          : "Nenhuma entrega concluída nesse período.";
+        return;
+      }
+      statusEl.textContent = `${pontos.length} de ${entregues.length} entrega(s) com localização salva nesse período.`;
+      const bounds = new maplibregl.LngLatBounds();
+      pontos.forEach(o=>{
+        const pos = [o.entregaLng, o.entregaLat];
+        const popup = new maplibregl.Popup({offset:20}).setHTML(
+          `<strong>#${o.numero} · ${o.nome}</strong><br>${fmtDateBR(o.date)} às ${fmtTime(o.horarios.entrega)}<br><span style="color:#666">${o.endereco||""}</span>`
+        );
+        const marker = new maplibregl.Marker({color:"#C1440E"}).setLngLat(pos).setPopup(popup).addTo(this.adminMap);
+        this.adminMapMarkers.push(marker);
+        bounds.extend(pos);
+      });
+      this.adminMap.fitBounds(bounds, {padding:60, maxZoom:16});
+    }
+  };
+
+  /* ================= ESTOQUE ================= */
+  const Estoque = {
+    root:null,
+    async render(root){
+      this.root = root;
+      root.innerHTML = `
+        <header class="topbar">
+          <div><h1>📦 Estoque</h1><div class="tag">Massa e bebidas disponíveis hoje</div></div>
+          <a class="home-link" href="#/">trocar tela</a>
+        </header>
+        <main>
+          <div class="panel" style="max-width:520px;">
+            <h2>Massa</h2>
+            <div class="row">
+              <div class="field">
+                <label>Massa M (quantas dá pra vender hoje)</label>
+                <input id="massa-m-input" type="number" min="0" placeholder="0">
+              </div>
+              <div class="field">
+                <label>Massa G (quantas dá pra vender hoje)</label>
+                <input id="massa-g-input" type="number" min="0" placeholder="0">
+              </div>
+            </div>
+          </div>
+          <div class="panel" style="max-width:520px;">
+            <h2>Bebidas</h2>
+            <div id="bebidas-estoque-list"></div>
+          </div>
+        </main>
+      `;
+      root.querySelector("#massa-m-input").addEventListener("change", async e=>{
+        await setEstoqueMassa("M", Math.max(0, parseInt(e.target.value)||0));
+        toast("Estoque de massa M atualizado");
+      });
+      root.querySelector("#massa-g-input").addEventListener("change", async e=>{
+        await setEstoqueMassa("G", Math.max(0, parseInt(e.target.value)||0));
+        toast("Estoque de massa G atualizado");
+      });
+      await this.refresh();
+    },
+    async refresh(){
+      const massa = await getEstoqueMassa();
+      this.root.querySelector("#massa-m-input").value = massa.M;
+      this.root.querySelector("#massa-g-input").value = massa.G;
+
+      const bebidas = await getItems("bebidas");
+      const listEl = this.root.querySelector("#bebidas-estoque-list");
+      if(!bebidas.length){
+        listEl.innerHTML = '<div class="empty">Nenhuma bebida cadastrada ainda — cadastre em Configurações primeiro.</div>';
+        return;
+      }
+      listEl.innerHTML = bebidas.map(b=>`
+        <div class="client-row">
+          <div class="info"><div class="name">${b.nome}</div></div>
+          <div class="actions">
+            <input type="number" min="0" class="bebida-estoque-input" data-id="${b.id}" value="${b.estoque||0}" style="width:80px;">
+          </div>
+        </div>
+      `).join("");
+      listEl.querySelectorAll(".bebida-estoque-input").forEach(inp=>{
+        inp.addEventListener("change", async ()=>{
+          const val = Math.max(0, parseInt(inp.value)||0);
+          const { error } = await supabase.from("bebidas").update({ estoque: val }).eq("id", inp.dataset.id);
+          if(error) console.error(error);
+          toast("Estoque atualizado");
+        });
+      });
+    }
+  };
+
+  /* ================= CONFIGURACOES ================= */
+  const Configuracoes = {
+    root:null, tab:"sabores", editingId:null,
+    priceFieldsHTML(tab){
+      if(tab === "sabores" || tab === "bordas") return `
+        <div class="row">
+          <div class="field"><label>Preço M (R$)</label><input id="item-preco-m" type="number" step="0.01" min="0" placeholder="0,00"></div>
+          <div class="field"><label>Preço G (R$)</label><input id="item-preco-g" type="number" step="0.01" min="0" placeholder="0,00"></div>
+        </div>`;
+      return `
+        <div class="field"><label>Preço (R$)</label><input id="item-preco" type="number" step="0.01" min="0" placeholder="0,00"></div>`;
+    },
+    async render(root){
+      this.root = root;
+      this.tab = "sabores";
+      this.editingId = null;
+      root.innerHTML = `
+        <header class="topbar">
+          <div><h1>⚙️ Configurações</h1><div class="tag">Sabores, bebidas, bordas e preços</div></div>
+          <a class="home-link" href="#/">trocar tela</a>
+        </header>
+        <main>
+          <div class="panel" style="max-width:520px;">
+            <div class="tabs">
+              <button type="button" class="tab-btn active" data-tab="sabores">Sabores de pizza</button>
+              <button type="button" class="tab-btn" data-tab="bebidas">Bebidas</button>
+              <button type="button" class="tab-btn" data-tab="bordas">Bordas</button>
+            </div>
+            <form id="item-form">
+              <div class="row">
+                <div class="field">
+                  <label>Nome</label>
+                  <input id="item-nome" placeholder="Nome" required>
+                </div>
+              </div>
+              <div id="price-fields">${this.priceFieldsHTML("sabores")}</div>
+              <div class="row">
+                <button type="submit" class="primary" style="flex:1;" id="item-submit-btn">Adicionar</button>
+                <button type="button" class="ghost" id="item-cancel-edit" style="display:none;">Cancelar edição</button>
+              </div>
+            </form>
+            <hr style="border:none;border-top:1px solid var(--line);margin:18px 0;">
+            <div id="items-list"></div>
+          </div>
+        </main>
+      `;
+      const resetForm = ()=>{
+        root.querySelector("#item-form").reset();
+        this.editingId = null;
+        root.querySelector("#item-submit-btn").textContent = "Adicionar";
+        root.querySelector("#item-cancel-edit").style.display = "none";
+      };
+      root.querySelectorAll(".tab-btn").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          root.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+          btn.classList.add("active");
+          this.tab = btn.dataset.tab;
+          root.querySelector("#price-fields").innerHTML = this.priceFieldsHTML(this.tab);
+          resetForm();
+          this.refresh();
+        });
+      });
+      root.querySelector("#item-form").addEventListener("submit", async e=>{
+        e.preventDefault();
+        const nome = root.querySelector("#item-nome").value;
+        if(this.editingId && this.editingId !== nome.trim().toLowerCase()){
+          await deleteItem(this.tab, this.editingId);
+        }
+        let data = { nome };
+        if(this.tab === "sabores" || this.tab === "bordas"){
+          data.preco_m = parseFloat(root.querySelector("#item-preco-m").value)||0;
+          data.preco_g = parseFloat(root.querySelector("#item-preco-g").value)||0;
+        } else {
+          data.preco = parseFloat(root.querySelector("#item-preco").value)||0;
+        }
+        await upsertItem(this.tab, data);
+        resetForm();
+        this.refresh();
+      });
+      root.querySelector("#item-cancel-edit").addEventListener("click", resetForm);
+      await this.refresh();
+    },
+    async refresh(){
+      const items = await getItems(this.tab);
+      const listEl = this.root.querySelector("#items-list");
+      if(!items.length){
+        listEl.innerHTML = '<div class="empty">Nada cadastrado ainda.</div>';
+        return;
+      }
+      const priceLabel = (it)=> (this.tab === "sabores" || this.tab === "bordas")
+        ? `M: ${fmtMoney(it.preco_m)} · G: ${fmtMoney(it.preco_g)}`
+        : fmtMoney(it.preco);
+      listEl.innerHTML = items.map(it=>`
+        <div class="client-row">
+          <div class="info"><div class="name">${it.nome}</div><div class="sub">${priceLabel(it)}</div></div>
+          <div class="actions">
+            <button class="ghost edit-item-btn" data-id="${it.id}">Editar</button>
+            <button class="danger-text del-item-btn" data-id="${it.id}">Excluir</button>
+          </div>
+        </div>
+      `).join("");
+      listEl.querySelectorAll(".edit-item-btn").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const item = items.find(it=>it.id===btn.dataset.id);
+          this.root.querySelector("#item-nome").value = item.nome;
+          if(this.tab === "sabores" || this.tab === "bordas"){
+            this.root.querySelector("#item-preco-m").value = item.preco_m || "";
+            this.root.querySelector("#item-preco-g").value = item.preco_g || "";
+          } else {
+            this.root.querySelector("#item-preco").value = item.preco || "";
+          }
+          this.editingId = item.id;
+          this.root.querySelector("#item-submit-btn").textContent = "Salvar alteração";
+          this.root.querySelector("#item-cancel-edit").style.display = "inline-block";
+          this.root.querySelector("#item-nome").focus();
+        });
+      });
+      listEl.querySelectorAll(".del-item-btn").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          const item = items.find(it=>it.id===btn.dataset.id);
+          if(confirm("Excluir \""+item.nome+"\"?")){
+            await deleteItem(this.tab, item.id);
+            this.refresh();
+          }
+        });
+      });
+    }
+  };
+
+  /* ================= LANDING / ROUTER ================= */
+  const LOGO_B64 = "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";
+  function renderLanding(root){
+    root.innerHTML = `
+      <div class="landing">
+        <div class="landing-card">
+          <img class="landing-logo" src="data:image/webp;base64,${LOGO_B64}" alt="Nice Pizza Delivery">
+          <div class="role-links">
+            <a class="role-btn atendente" href="#/atendente">Atendente<span class="sub">Lançar pedidos que chegam pelo WhatsApp</span></a>
+            <a class="role-btn producao" href="#/producao">Produção<span class="sub">Ver e preparar os pedidos da cozinha</span></a>
+            <a class="role-btn entregador" href="#/entregador">Entregador<span class="sub">Ver entregas prontas e em rota</span></a>
+            <a class="role-btn admin" href="#/admin">Administração</a>
+            <a class="role-btn config" href="#/config">Configurações</a>
+            <a class="role-btn estoque" href="#/estoque">Estoque</a>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  const ADMIN_PASSWORD = "2356";
+  function renderAdminLogin(root, onSuccess){
+    root.innerHTML = `
+      <div class="landing">
+        <div class="landing-card">
+          <h1>🔒 Administração</h1>
+          <p>Essa tela é protegida — digite a senha para continuar.</p>
+          <form id="admin-login-form">
+            <div class="field">
+              <input type="password" id="admin-pass" placeholder="Senha" autofocus style="text-align:center;font-size:18px;letter-spacing:2px;">
+            </div>
+            <div id="admin-login-error" style="color:var(--tomato-dark);font-size:13px;margin-bottom:10px;display:none;">Senha incorreta.</div>
+            <button type="submit" class="primary" style="width:100%;">Entrar</button>
+          </form>
+          <div style="margin-top:16px;"><a class="home-link" href="#/">voltar</a></div>
+        </div>
+      </div>
+    `;
+    root.querySelector("#admin-login-form").addEventListener("submit", e=>{
+      e.preventDefault();
+      const val = root.querySelector("#admin-pass").value;
+      if(val === ADMIN_PASSWORD){
+        sessionStorage.setItem("admin_unlocked", "1");
+        onSuccess();
+      } else {
+        root.querySelector("#admin-login-error").style.display = "block";
+        root.querySelector("#admin-pass").value = "";
+        root.querySelector("#admin-pass").focus();
+      }
+    });
+  }
+
+  let pollTimer = null;
+  let liveChannels = [];
+  function stopPolling(){
+    if(pollTimer){ clearInterval(pollTimer); pollTimer=null; }
+    if(Producao.tickTimer){ clearInterval(Producao.tickTimer); Producao.tickTimer=null; }
+    if(Entregador.tickTimer){ clearInterval(Entregador.tickTimer); Entregador.tickTimer=null; }
+    Entregador.stopTracking();
+    liveChannels.forEach(ch=> supabase.removeChannel(ch));
+    liveChannels = [];
+  }
+
+  function route(){
+    stopPolling();
+    const root = document.getElementById("app");
+    const hash = window.location.hash.replace(/^#\/?/,"");
+    if(hash === "atendente"){
+      Atendente.render(root);
+      pollTimer = setInterval(()=> Atendente.refresh(), 4000);
+      liveChannels.push(subscribeToTable("pedidos", ()=> Atendente.refresh()));
+      liveChannels.push(subscribeToTable("sabores", ()=> Atendente.loadSaboresCache()));
+      liveChannels.push(subscribeToTable("bebidas", ()=> Atendente.loadBebidasCache()));
+      liveChannels.push(subscribeToTable("bordas", ()=> Atendente.loadBordasCache()));
+      liveChannels.push(subscribeToTable("estoque_massa", ()=> Atendente.loadEstoqueMassa()));
+      liveChannels.push(subscribeToTable("localizacao_entregador", ()=> Atendente.updateRastreamentoMarker()));
+      liveChannels.push(subscribeToTable("rastreamento_config", async ()=>{
+        Atendente.rastreamentoAtivo = await getRastreamentoAtivo();
+        Atendente.updateRastreamentoBtn();
+      }));
+    } else if(hash === "producao"){
+      Producao.render(root);
+      pollTimer = setInterval(()=> Producao.refresh(), 4000);
+      liveChannels.push(subscribeToTable("pedidos", ()=> Producao.refresh()));
+    } else if(hash === "entregador" || hash === "entregador-app"){
+      Entregador.render(root, hash === "entregador-app");
+      pollTimer = setInterval(()=> Entregador.refresh(), 4000);
+      liveChannels.push(subscribeToTable("pedidos", ()=> Entregador.refresh()));
+      liveChannels.push(subscribeToTable("rastreamento_config", ()=> Entregador.onTrackingConfigChange()));
+    } else if(hash === "admin"){
+      if(sessionStorage.getItem("admin_unlocked") === "1"){
+        Administracao.render(root);
+        pollTimer = setInterval(()=> Administracao.refresh(), 8000);
+        liveChannels.push(subscribeToTable("pedidos", ()=> Administracao.refresh()));
+      } else {
+        renderAdminLogin(root, route);
+      }
+    } else if(hash === "config"){
+      Configuracoes.render(root);
+      liveChannels.push(subscribeToTable("sabores", ()=> Configuracoes.refresh()));
+      liveChannels.push(subscribeToTable("bebidas", ()=> Configuracoes.refresh()));
+      liveChannels.push(subscribeToTable("bordas", ()=> Configuracoes.refresh()));
+    } else if(hash === "estoque"){
+      Estoque.render(root);
+      liveChannels.push(subscribeToTable("bebidas", ()=> Estoque.refresh()));
+      liveChannels.push(subscribeToTable("estoque_massa", ()=> Estoque.refresh()));
+    } else {
+      renderLanding(root);
+    }
+  }
+
+  function subscribeToTable(table, onChange){
+    return supabase
+      .channel(table+"-live-"+Math.random().toString(36).slice(2))
+      .on("postgres_changes", { event: "*", schema: "public", table }, onChange)
+      .subscribe();
+  }
+
+  window.addEventListener("hashchange", route);
+  window.addEventListener("DOMContentLoaded", route);
+  if(document.readyState !== "loading") route();
+})();
+</script>
+</body>
+</html>
