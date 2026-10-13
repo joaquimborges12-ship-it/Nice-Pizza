@@ -713,11 +713,13 @@
   }
 
   async function getOrderByNumero(date, numero){
+    // Se por algum motivo existir mais de um pedido com o mesmo número, usa o primeiro que não está cancelado.
     const { data, error } = await supabase.from("pedidos").select("*")
-      .eq("data", date).eq("numero", numero).maybeSingle();
+      .eq("data", date).eq("numero", numero).order("id", {ascending:true});
     if(error){ console.error(error); return null; }
-    if(!data) return null;
-    const order = rowToOrder(data);
+    if(!data || !data.length) return null;
+    const row = data.find(r=>r.status !== "Cancelada") || data[0];
+    const order = rowToOrder(row);
     await attachItems([order]);
     return order;
   }
@@ -1445,7 +1447,7 @@
         await this.loadClientsCache();
       });
 
-      root.querySelector("#order-form").addEventListener("submit", async e=>{
+      const enviarPedido = async e=>{
         e.preventDefault();
         const fd = new FormData(e.target);
         const data = Object.fromEntries(fd.entries());
@@ -1486,6 +1488,13 @@
         await this.loadEstoqueMassa();
         await this.loadBebidasCache();
         searchInput.focus();
+      };
+      root.querySelector("#order-form").addEventListener("submit", async e=>{
+        e.preventDefault();
+        if(this._enviando) return; // evita pedido duplicado por toque duplo
+        this._enviando = true;
+        const btn = e.target.querySelector('button[type="submit"]'); if(btn) btn.disabled = true;
+        try{ await enviarPedido(e); } finally { this._enviando = false; if(btn) btn.disabled = false; }
       });
       root.querySelector("#search").addEventListener("input", ()=> this.refresh());
       await this.refresh();
