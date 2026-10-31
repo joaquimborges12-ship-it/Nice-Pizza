@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="app-version" content="20261030-222129">
+<meta name="app-version" content="20261030-230136">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 <title>Pizzaria — Pedidos</title>
 <script>try{document.documentElement.setAttribute("data-theme", localStorage.getItem("tema")==="light"?"light":"dark");}catch(e){document.documentElement.setAttribute("data-theme","dark");}</script>
@@ -523,6 +523,7 @@
   .tx-r a{color:#6c8cff;font-size:12px;cursor:pointer;margin-left:8px;} .tx-zero{color:var(--ink-soft);}
   .zn-rot{font-size:13px;font-weight:700;text-shadow:0 0 3px #000,0 0 3px #000;white-space:nowrap;pointer-events:none;}
   :root[data-theme="dark"] .maplibregl-canvas{filter:invert(1) hue-rotate(180deg) brightness(.95) contrast(.9);}
+  .sat-on .maplibregl-canvas{filter:none !important;} .sat-btn{width:auto !important;padding:0 10px;font-size:13px;color:#222;white-space:nowrap;}
   /* prefixo .maplibregl-map para ganhar do CSS da biblioteca, que é carregado depois */
   .maplibregl-map .maplibregl-popup-content{background:var(--card);color:var(--ink);border-radius:0;box-shadow:0 2px 10px rgba(0,0,0,.35);}
   .maplibregl-map .maplibregl-popup-anchor-bottom .maplibregl-popup-tip,
@@ -667,6 +668,36 @@
     _todosCache = { t:Date.now(), rows: rows.map(rowToOrder).filter(o=>o.status!=="Agendado") };
     return _todosCache.rows;
   }
+
+  /* ---------- Satélite (botão Mapa | Satélite em todos os mapas) ---------- */
+  const Satelite = {
+    ativo(){ try{ return localStorage.getItem("mapa_satelite") === "1"; }catch(e){ return false; } },
+    ligar(map){
+      const self = this;
+      const aplicar = on=>{
+        if(map.getLayer("sat-base")) map.setLayoutProperty("sat-base","visibility", on ? "visible" : "none");
+        map.getContainer().classList.toggle("sat-on", on);
+        if(btn) btn.textContent = on ? "🗺 Mapa" : "🛰 Satélite";
+      };
+      let btn = null;
+      map.addControl({
+        onAdd(){
+          const d = document.createElement("div"); d.className = "maplibregl-ctrl maplibregl-ctrl-group";
+          btn = document.createElement("button"); btn.type = "button"; btn.className = "sat-btn"; btn.title = "Alternar entre mapa e satélite";
+          btn.textContent = self.ativo() ? "🗺 Mapa" : "🛰 Satélite";
+          btn.onclick = ()=>{ const novo = !(map.getLayer("sat-base") && map.getLayoutProperty("sat-base","visibility") === "visible"); try{ localStorage.setItem("mapa_satelite", novo ? "1" : "0"); }catch(e){} aplicar(novo); };
+          d.appendChild(btn); return d;
+        },
+        onRemove(){}
+      }, "top-left");
+      const montar = ()=>{
+        if(!map.getSource("sat-base")) map.addSource("sat-base", { type:"raster", tileSize:256, maxzoom:19, attribution:"Imagens © Esri, Maxar, Earthstar Geographics", tiles:["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"] });
+        if(!map.getLayer("sat-base")) map.addLayer({ id:"sat-base", type:"raster", source:"sat-base", layout:{ visibility:"none" } });
+        aplicar(self.ativo());
+      };
+      if(map.loaded && map.loaded()) montar(); else map.on("load", montar);
+    }
+  };
 
   const vendaDe = o=> (Number(o.valor)||0) - (Number(o.taxaEntrega)||0); // venda sem a taxa de entrega
   function fmtMoney(v){
@@ -1771,7 +1802,7 @@
           center: [-52.2064, -3.2033],
           zoom: 12
         });
-        this.rastreamentoMap.addControl(new maplibregl.NavigationControl());
+        this.rastreamentoMap.addControl(new maplibregl.NavigationControl()); Satelite.ligar(this.rastreamentoMap);
       }
       setTimeout(()=> this.rastreamentoMap.resize(), 50);
       await this.updateRastreamentoMarker();
@@ -3168,7 +3199,7 @@
           center: [-52.2064, -3.2033],
           zoom: 12
         });
-        this.adminMap.addControl(new maplibregl.NavigationControl());
+        this.adminMap.addControl(new maplibregl.NavigationControl()); Satelite.ligar(this.adminMap);
       }
       setTimeout(()=> this.adminMap && this.adminMap.resize(), 50);
       this.adminMapMarkers = this.adminMapMarkers || [];
@@ -3808,7 +3839,7 @@
           center: [-52.2064, -3.2033],
           zoom: 12
         });
-        this.map.addControl(new maplibregl.NavigationControl());
+        this.map.addControl(new maplibregl.NavigationControl()); Satelite.ligar(this.map);
         this.ajustar = true;
       }
       setTimeout(()=>{ if(this.map) this.map.resize(); }, 50);
@@ -4416,7 +4447,7 @@
       if(typeof maplibregl === "undefined"){ aviso.style.display = "block"; aviso.textContent = "Não consegui carregar o mapa. Verifique a internet e recarregue."; return; }
       const b = this.cfg.base;
       this.map = new maplibregl.Map({ container:"zn-mapa", style:"https://tiles.openfreemap.org/styles/liberty", center: b ? [b.lng,b.lat] : ZN_CENTRO, zoom: b ? 12 : 12 });
-      this.map.addControl(new maplibregl.NavigationControl());
+      this.map.addControl(new maplibregl.NavigationControl()); Satelite.ligar(this.map);
       this.map.on("click", e=> this.aoClicarMapa(e.lngLat));
       this.map.on("load", ()=>{ this.mapaPronto = true; this.pintar(); });
       const el = this.root.querySelector("#zn-mapa");
