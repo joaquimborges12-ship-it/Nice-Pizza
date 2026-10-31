@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<meta name="app-version" content="20261030-210849">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 <title>Pizzaria — Pedidos</title>
 <script>try{document.documentElement.setAttribute("data-theme", localStorage.getItem("tema")==="light"?"light":"dark");}catch(e){document.documentElement.setAttribute("data-theme","dark");}</script>
@@ -197,6 +198,46 @@
   .count-badge{background:var(--line);color:var(--ink);border-radius:0;padding:1px 9px;font-size:12px;}
   @media (max-width:720px){.prod-columns{flex-direction:column;}}
   .order-card{background:var(--card);border:1px solid var(--line);border-radius:0;padding:14px;margin-bottom:12px;}
+  /* Aviso de nova versão */
+  #aviso-versao{position:fixed;left:0;right:0;top:0;z-index:9999;display:none;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;padding:12px 16px;background:#2f6bff;color:#fff;font-weight:700;font-size:16px;box-shadow:0 4px 18px rgba(0,0,0,.45);}
+  #aviso-versao button{margin:0;padding:9px 16px;font-size:15px;font-weight:700;border:2px solid #fff;background:#fff;color:#1b4fd1;cursor:pointer;}
+  #aviso-versao button.sec{background:transparent;color:#fff;}
+  /* Agendamento */
+  .status-Agendado{background:rgba(108,140,255,.18);color:#9db4ff;}
+  .ag-pill{background:#6c8cff;color:#fff;font-weight:700;padding:3px 8px;font-size:12px;white-space:nowrap;display:inline-block;}
+  .ag-box{border:1px solid #6c8cff;background:rgba(108,140,255,.10);padding:12px;margin:12px 0;}
+  .ag-box .ag-t{font-weight:700;color:#9db4ff;margin-bottom:8px;}
+  .ag-quick{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 8px;}
+  .ag-quick button{border:1px solid var(--line);background:transparent;padding:4px 9px;font-size:13px;color:var(--ink-soft);margin:0;}
+  .ag-row{display:flex;gap:10px;flex-wrap:wrap;}
+  .ag-row .field{flex:1;min-width:130px;margin-bottom:6px;}
+  .ag-info{font-size:13px;color:#9db4ff;}
+  .ag-actions{display:flex;gap:8px;align-items:stretch;margin-top:10px;}
+  .ag-mini{padding:0 14px;font-size:13px;background:transparent;border:1px solid #6c8cff;color:#9db4ff;white-space:nowrap;margin:0;}
+  .ag-resumo{border:1px solid #6c8cff;background:rgba(108,140,255,.12);color:#c5d3ff;padding:10px 12px;margin-bottom:12px;font-size:14px;}
+  tr.ag-tr td{background:rgba(108,140,255,.10);}
+  .ag-strip{border:1px solid #6c8cff;background:rgba(108,140,255,.08);padding:12px;margin:6px 0 20px;}
+  .ag-strip h3{margin:0 0 10px;font-size:17px;color:#9db4ff;font-family:var(--font-display);}
+  .ag-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 10px;background:var(--card);border:1px solid var(--line);margin-bottom:6px;}
+  .ag-item:last-child{margin-bottom:0;}
+  .ag-item .when{font-weight:800;color:#9db4ff;font-family:ui-monospace,monospace;white-space:nowrap;}
+  .ag-item .cnt{color:var(--ink-soft);font-size:13px;white-space:nowrap;}
+  .ag-tag{margin-left:8px;vertical-align:middle;font-family:var(--font-body,inherit);}
+  /* Produção: pizza no forno (alerta piscando) */
+  .forno-btn{background:#e8890c;color:#fff;border-color:#e8890c;}
+  .order-card.no-forno{border-color:#ff3b30;animation:forno-pisca 1s ease-in-out infinite;}
+  .order-card.no-forno.late{border-color:#ff3b30;}
+  .forno-banner{background:#ff3b30;color:#fff;font-weight:800;font-size:17px;letter-spacing:.04em;text-align:center;padding:8px;margin:-14px -14px 10px;}
+  @keyframes forno-pisca{
+    0%,100%{background:#8a1612;box-shadow:0 0 0 3px #ff3b30,0 0 26px #ff3b30aa;}
+    50%{background:var(--card);box-shadow:0 0 0 3px #ff3b30;}
+  }
+  /* Produção: 2 pedidos por linha, todos do mesmo tamanho */
+  #col-pendentes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:stretch;}
+  #col-pendentes > .order-card{margin-bottom:0;display:flex;flex-direction:column;}
+  #col-pendentes > .order-card .actions{margin-top:auto;padding-top:12px;flex-wrap:wrap;}
+  #col-pendentes > .empty{grid-column:1 / -1;}
+  @media (max-width:720px){#col-pendentes{grid-template-columns:1fr;}}
   .order-card.late{border-color:var(--tomato);box-shadow:0 0 0 1px var(--tomato) inset;}
   .deliv-card.late{border-color:var(--tomato);box-shadow:0 0 0 1px var(--tomato) inset;}
   .order-card .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
@@ -510,6 +551,7 @@
       pagamento: row.pagamento, troco: row.troco, valor: row.valor, status: row.status,
       pixConfirmado: !!row.pix_confirmado, fotoClienteUrl: row.foto_cliente_url||"",
       pagamentos: Array.isArray(row.pagamentos) ? row.pagamentos : null, _colPag: ("pagamentos" in row),
+      agendadoPara: row.agendado_para || null, _colAg: ("agendado_para" in row),
       entregaLat: row.entrega_lat, entregaLng: row.entrega_lng,
       itens: [], bebidas: [],
       horarios: {
@@ -525,6 +567,7 @@
       pagamento: order.pagamento, troco: order.troco||"", valor: order.valor||0, status: order.status,
       pix_confirmado: !!order.pixConfirmado, foto_cliente_url: order.fotoClienteUrl||"",
       ...((order._colPag || (order.pagamentos && order.pagamentos.length>1)) ? { pagamentos: (order.pagamentos && order.pagamentos.length>1) ? order.pagamentos : null } : {}),
+      ...((order.agendadoPara || order._colAg) ? { agendado_para: order.agendadoPara || null } : {}),
       entrega_lat: order.entregaLat != null ? order.entregaLat : null,
       entrega_lng: order.entregaLng != null ? order.entregaLng : null,
       horario_pedido: order.horarios.pedido, horario_inicio_producao: order.horarios.inicioProducao,
@@ -582,7 +625,7 @@
   async function getTodosPedidos(){
     if(_todosCache.rows && Date.now()-_todosCache.t < 60000) return _todosCache.rows;
     const rows = await paginar((a,b)=> supabase.from("pedidos").select("*").order("data",{ascending:true}).order("id",{ascending:true}).range(a,b));
-    _todosCache = { t:Date.now(), rows: rows.map(rowToOrder) };
+    _todosCache = { t:Date.now(), rows: rows.map(rowToOrder).filter(o=>o.status!=="Agendado") };
     return _todosCache.rows;
   }
 
@@ -677,8 +720,32 @@
     }
   };
 
+  // Dia de trabalho de uma data qualquer (respeita a hora da virada do dia)
+  function diaTrabalhoDe(d){
+    const x = new Date(d.getTime() - HORA_VIRADA_DIA*3600*1000);
+    return x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0");
+  }
+  // "HOJE 19:30", "AMANHÃ 11:00" ou "SEX 31/10 11:00" (dia do calendário)
+  function fmtAgenda(iso){
+    const d = new Date(iso), n = new Date();
+    const dia0 = x=> new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+    const dif = Math.round((dia0(d) - dia0(n)) / 86400000);
+    const hm = String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
+    if(dif === 0) return "HOJE "+hm;
+    if(dif === 1) return "AMANHÃ "+hm;
+    const sem = ["DOM","SEG","TER","QUA","QUI","SEX","SÁB"][d.getDay()];
+    return sem+" "+String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0")+" "+hm;
+  }
+  function fmtFalta(iso){
+    const m = Math.round((new Date(iso).getTime() - Date.now())/60000);
+    if(m <= 0) return "agora";
+    if(m < 60) return "em "+m+" min";
+    if(m < 24*60) return "em "+Math.floor(m/60)+"h "+String(m%60).padStart(2,"0")+"min";
+    return "em "+Math.floor(m/1440)+" dia(s)";
+  }
   async function createOrder(orderData, pizzaItems, bebidaItems){
-    const date = todayStr();
+    const agend = orderData.agendadoPara ? new Date(orderData.agendadoPara) : null;
+    const date = agend ? diaTrabalhoDe(agend) : todayStr();
     const { data: last } = await supabase.from("pedidos").select("numero")
       .eq("data", date).order("numero", {ascending:false}).limit(1);
     const numero = (last && last[0] ? last[0].numero : 0) + 1;
@@ -686,7 +753,8 @@
       date, numero,
       nome:orderData.nome, telefone:orderData.telefone, endereco:orderData.endereco, linkMaps:orderData.link_maps||"",
       pagamento:orderData.pagamento, pagamentos:orderData.pagamentos||null, troco:orderData.troco||"", valor:parseFloat(String(orderData.valor||"0").replace(",", "."))||0,
-      status:"Pendente", pixConfirmado:false, fotoClienteUrl:orderData.fotoClienteUrl||"",
+      status: agend ? "Agendado" : "Pendente", agendadoPara: agend ? agend.toISOString() : null,
+      pixConfirmado:false, fotoClienteUrl:orderData.fotoClienteUrl||"",
       horarios:{ pedido:new Date().toISOString(), inicioProducao:null, pronta:null, saida:null, entrega:null }
     };
     const { data: inserted, error } = await supabase.from("pedidos").insert(orderToRow(order)).select().single();
@@ -702,9 +770,61 @@
     }
     insertedOrder.itens = pizzaItems;
     insertedOrder.bebidas = bebidaItems;
-    for(const item of pizzaItems){ await adjustEstoqueMassa(item.tamanho, -(parseInt(item.quantidade)||1)); }
-    for(const b of bebidaItems){ await adjustEstoqueBebida(b.nome, -(parseInt(b.quantidade)||1)); }
+    if(!agend){ // agendado só desconta o estoque quando for para a produção
+      for(const item of pizzaItems){ await adjustEstoqueMassa(item.tamanho, -(parseInt(item.quantidade)||1)); }
+      for(const b of bebidaItems){ await adjustEstoqueBebida(b.nome, -(parseInt(b.quantidade)||1)); }
+    }
     return insertedOrder;
+  }
+
+  // ---------- Agendamento: lista e liberação para a produção ----------
+  async function getAgendados(){
+    try{
+      const { data, error } = await supabase.from("pedidos").select("*").eq("status","Agendado").order("agendado_para", {ascending:true});
+      if(error || !data || !data.length) return [];
+      const orders = data.map(rowToOrder);
+      await attachItems(orders);
+      return orders;
+    }catch(e){ return []; }
+  }
+  // Libera para a produção os agendados cuja hora chegou (ou um pedido específico, com {id}).
+  async function liberarAgendados(opts){
+    opts = opts || {};
+    const agora = new Date().toISOString();
+    let rows = [];
+    try{
+      let q = supabase.from("pedidos").select("*").eq("status","Agendado");
+      q = opts.id ? q.eq("id", opts.id) : q.lte("agendado_para", agora);
+      const { data, error } = await q;
+      if(error || !data || !data.length) return 0;
+      rows = data;
+    }catch(e){ return 0; }
+    let n = 0;
+    for(const row of rows){
+      const order = rowToOrder(row);
+      await attachItems([order]);
+      if(order.date !== todayStr()){ // liberado em outro dia: entra no dia de hoje, com número novo
+        const { data: last } = await supabase.from("pedidos").select("numero").eq("data", todayStr()).order("numero", {ascending:false}).limit(1);
+        order.date = todayStr();
+        order.numero = (last && last[0] ? last[0].numero : 0) + 1;
+      }
+      order.status = "Pendente";
+      order.horarios.pedido = agora;
+      // só quem conseguir trocar o status "Agendado" -> "Pendente" desconta o estoque (evita duplicar)
+      const { data: ok, error } = await supabase.from("pedidos").update(orderToRow(order)).eq("id", order.id).eq("status","Agendado").select("id");
+      if(error || !ok || !ok.length) continue;
+      n++;
+      for(const item of order.itens){ await adjustEstoqueMassa(item.tamanho, -(parseInt(item.quantidade)||1)); }
+      for(const b of order.bebidas){ await adjustEstoqueBebida(b.nome, -(parseInt(b.quantidade)||1)); }
+    }
+    if(n) _todosCache = { t:0, rows:null };
+    return n;
+  }
+  let _ultChecagemAg = 0;
+  async function checarAgendados(){
+    if(Date.now() - _ultChecagemAg < 15000) return 0;
+    _ultChecagemAg = Date.now();
+    return await liberarAgendados();
   }
 
   async function saveOrder(order){
@@ -1013,7 +1133,7 @@
     const b = e.target.closest("[data-print]");
     if(!b) return;
     e.preventDefault();
-    const o = await getOrderByNumero(todayStr(), parseInt(b.dataset.print,10));
+    const o = await getOrderByNumero(b.dataset.data || todayStr(), parseInt(b.dataset.print,10));
     if(o) Imprimir.comanda(o); else toast("Pedido não encontrado");
   });
 
@@ -1252,7 +1372,22 @@
                         Salvar/atualizar este cliente no cadastro
                       </label>
                     </div>
-                    <button type="submit" class="primary" style="width:100%;">Enviar para produção</button>
+                    <div class="ag-box" id="ag-box" style="display:none;">
+                      <div class="ag-t">⏰ Agendar para mais tarde</div>
+                      <div class="ag-quick">
+                        <button type="button" data-q="0,18:00">Hoje 18:00</button><button type="button" data-q="0,19:30">Hoje 19:30</button>
+                        <button type="button" data-q="1,11:00">Amanhã 11:00</button><button type="button" data-q="1,18:00">Amanhã 18:00</button>
+                      </div>
+                      <div class="ag-row">
+                        <div class="field"><label>Dia</label><input type="date" id="ag-dia"></div>
+                        <div class="field"><label>Horário de ir para a produção</label><input type="time" id="ag-hora"></div>
+                      </div>
+                      <div class="ag-info" id="ag-info">Escolha o dia e o horário.</div>
+                    </div>
+                    <div class="ag-actions">
+                      <button type="submit" class="primary" id="order-submit-btn" style="flex:1;">Enviar para produção</button>
+                      <button type="button" class="ag-mini" id="ag-toggle">⏰ Agendar</button>
+                    </div>
                   </form>
                 </div>
 
@@ -1299,6 +1434,7 @@
                   <button type="button" class="ghost" id="toggle-view-btn">📍 Ver rastreamento</button>
                 </div>
                 <div id="dashboard-pedidos-view" style="margin-top:14px;">
+                  <div id="ag-resumo"></div>
                   <input class="search-box" id="search" placeholder="Buscar por nome ou nº da comanda...">
                   <div id="orders-list"></div>
                 </div>
@@ -1463,6 +1599,16 @@
         if(pg.erro){ toast(pg.erro); return; }
         data.pagamento = pg.pagamento; data.pagamentos = pg.pagamentos;
 
+        let agendadoPara = null;
+        if(this._agendando){
+          const dia = root.querySelector("#ag-dia").value, hora = root.querySelector("#ag-hora").value;
+          const quando = (dia && hora) ? new Date(dia+"T"+hora) : null;
+          if(!quando || isNaN(quando.getTime())){ toast("Escolha o dia e o horário do agendamento"); return; }
+          if(quando.getTime() <= Date.now()){ toast("Escolha um horário no futuro"); return; }
+          agendadoPara = quando.toISOString();
+        }
+        data.agendadoPara = agendadoPara;
+
         const matchedClient = this.clientsCache.find(c => c.id === normalizePhone(data.telefone));
         data.fotoClienteUrl = matchedClient ? (matchedClient.foto_url||"") : "";
         const order = await createOrder(data, validPizzas, validBebidas);
@@ -1470,8 +1616,13 @@
           await upsertClient(data);
           await this.loadClientsCache();
         }
-        toast("Comanda #"+order.numero+" enviada");
-        if(Imprimir.auto()) Imprimir.comanda(await getOrderByNumero(todayStr(), order.numero) || order);
+        if(agendadoPara){
+          toast("Comanda #"+order.numero+" agendada — "+fmtAgenda(agendadoPara));
+          this.fecharAgenda();
+        } else {
+          toast("Comanda #"+order.numero+" enviada");
+          if(Imprimir.auto()) Imprimir.comanda(await getOrderByNumero(todayStr(), order.numero) || order);
+        }
         e.target.reset();
         root.querySelector("#troco-field").style.display="none";
         this.pagCtl.set(null);
@@ -1494,8 +1645,45 @@
         if(this._enviando) return; // evita pedido duplicado por toque duplo
         this._enviando = true;
         const btn = e.target.querySelector('button[type="submit"]'); if(btn) btn.disabled = true;
-        try{ await enviarPedido(e); } finally { this._enviando = false; if(btn) btn.disabled = false; }
+        try{ await enviarPedido(e); }
+        catch(err){
+          console.error(err);
+          toast(this._agendando ? "Não consegui agendar. Rode o arquivo add-agendamento.sql no Supabase." : "Não consegui enviar o pedido. Tente de novo.");
+        }
+        finally { this._enviando = false; if(btn) btn.disabled = false; }
       });
+
+      // --- botão discreto de agendamento ---
+      const agInfo = ()=>{
+        const dia = root.querySelector("#ag-dia").value, hora = root.querySelector("#ag-hora").value;
+        const el = root.querySelector("#ag-info");
+        if(!dia || !hora){ el.innerHTML = "Escolha o dia e o horário."; return; }
+        const d = new Date(dia+"T"+hora);
+        el.innerHTML = isNaN(d.getTime()) ? "Escolha o dia e o horário." : "Vai para a produção <b>"+fmtAgenda(d.toISOString()).toLowerCase()+"</b>.";
+      };
+      this.fecharAgenda = ()=>{
+        this._agendando = false;
+        root.querySelector("#ag-box").style.display = "none";
+        root.querySelector("#ag-toggle").textContent = "⏰ Agendar";
+        root.querySelector("#order-submit-btn").textContent = "Enviar para produção";
+      };
+      root.querySelector("#ag-toggle").addEventListener("click", ()=>{
+        if(this._agendando){ this.fecharAgenda(); return; }
+        this._agendando = true;
+        root.querySelector("#ag-box").style.display = "block";
+        root.querySelector("#ag-toggle").textContent = "✕ Sem agendar";
+        root.querySelector("#order-submit-btn").textContent = "⏰ Agendar pedido";
+        agInfo();
+      });
+      root.querySelectorAll("#ag-box [data-q]").forEach(b=> b.addEventListener("click", ()=>{
+        const [off, hm] = b.dataset.q.split(",");
+        const d = new Date(); d.setDate(d.getDate()+parseInt(off,10));
+        root.querySelector("#ag-dia").value = d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+        root.querySelector("#ag-hora").value = hm;
+        agInfo();
+      }));
+      root.querySelector("#ag-dia").addEventListener("input", agInfo);
+      root.querySelector("#ag-hora").addEventListener("input", agInfo);
       root.querySelector("#search").addEventListener("input", ()=> this.refresh());
       await this.refresh();
     },
@@ -1677,31 +1865,39 @@
       });
     },
     async refresh(){
-      const orders = await getOrdersForDate(todayStr());
+      await checarAgendados();
+      const [orders, agendados] = await Promise.all([getOrdersForDate(todayStr()), getAgendados()]);
+      const todos = agendados.concat(orders.filter(o=>o.status!=="Agendado").reverse());
+      const resEl = this.root.querySelector("#ag-resumo");
+      if(resEl){
+        const p = agendados[0];
+        setHtml(resEl, p ? `<div class="ag-resumo">⏰ <b>${agendados.length} pedido${agendados.length>1?"s":""} agendado${agendados.length>1?"s":""}</b> · próximo: <b>${fmtAgenda(p.agendadoPara).toLowerCase()}</b> (#${p.numero} ${admEsc(p.nome)})</div>` : "");
+      }
       const q = (this.root.querySelector("#search")?.value || "").trim().toLowerCase();
-      const filtered = q ? orders.filter(o =>
+      const filtered = q ? todos.filter(o =>
         o.nome.toLowerCase().includes(q) || String(o.numero).includes(q)
-      ) : orders;
+      ) : todos;
       const listEl = this.root.querySelector("#orders-list");
       if(!filtered.length){
         setHtml(listEl, '<div class="empty">Nenhum pedido ainda hoje.</div>');
         return;
       }
-      const rows = filtered.slice().reverse().map(o => `
-        <tr data-numero="${o.numero}">
+      const rows = filtered.map(o => `
+        <tr data-numero="${o.numero}" class="${o.status==="Agendado" ? "ag-tr" : ""}">
           <td class="num">#${o.numero}</td>
           <td>${fmtTime(o.horarios.pedido)}</td>
           <td>${orderPizzasSummary(o)}${o.bebidas && o.bebidas.length ? `<br><span style="color:var(--ink-soft)">🥤 ${orderBebidasSummary(o)}</span>` : ""}</td>
           <td>${o.nome}<br><span style="color:var(--ink-soft);font-size:12px;">💳 ${pagLabel(o)}</span></td>
-          <td><span class="status-pill ${statusClass(o.status)}">${o.status}</span></td>
+          <td>${o.status==="Agendado" ? `<span class="ag-pill">⏰ ${fmtAgenda(o.agendadoPara)}</span>` : `<span class="status-pill ${statusClass(o.status)}">${o.status}</span>`}</td>
           <td>${temPix(o) ? (
             o.pixConfirmado
               ? `<span class="status-pill status-Pronta">Pix ok ✓</span>`
-              : `<button class="warn confirm-pix-btn" data-numero="${o.numero}" style="padding:6px 10px;font-size:13px;">Confirmar Pix</button>`
+              : `<button class="warn confirm-pix-btn" data-numero="${o.numero}" data-data="${o.date}" style="padding:6px 10px;font-size:13px;">Confirmar Pix</button>`
           ) : ""}</td>
-          <td><button class="ghost" data-print="${o.numero}" title="Imprimir comanda" style="padding:6px 10px;font-size:13px;">🖨</button>${o.status==="Pendente" ? `
-            <button class="ghost edit-btn" data-numero="${o.numero}" style="padding:6px 10px;font-size:13px;">Editar</button>
-            <button class="danger-text cancel-btn" data-numero="${o.numero}">Cancelar</button>
+          <td><button class="ghost" data-print="${o.numero}" data-data="${o.date}" title="Imprimir comanda" style="padding:6px 10px;font-size:13px;">🖨</button>${(o.status==="Pendente" || o.status==="Agendado") ? `
+            ${o.status==="Agendado" ? `<button class="primary liberar-btn" data-id="${o.id}" style="padding:6px 10px;font-size:13px;" title="Mandar para a produção agora">Liberar agora</button>` : ""}
+            <button class="ghost edit-btn" data-numero="${o.numero}" data-data="${o.date}" style="padding:6px 10px;font-size:13px;">Editar</button>
+            <button class="danger-text cancel-btn" data-numero="${o.numero}" data-data="${o.date}">Cancelar</button>
           ` : ""}</td>
         </tr>
       `).join("");
@@ -1714,7 +1910,7 @@
       listEl.querySelectorAll(".confirm-pix-btn").forEach(btn=>{
         bindOnce(btn, "click", async ()=>{
           const numero = parseInt(btn.dataset.numero,10);
-          const order = await getOrderByNumero(todayStr(), numero);
+          const order = await getOrderByNumero(btn.dataset.data || todayStr(), numero);
           order.pixConfirmado = true;
           await saveOrder(order);
           toast("Pix da comanda #"+numero+" confirmado — liberada pro entregador");
@@ -1725,10 +1921,11 @@
         bindOnce(btn, "click", async ()=>{
           const numero = parseInt(btn.dataset.numero,10);
           if(confirm("Tem certeza que quer cancelar a comanda #"+numero+"?")){
-            const order = await getOrderByNumero(todayStr(), numero);
+            const order = await getOrderByNumero(btn.dataset.data || todayStr(), numero);
+            const eraAgendado = order.status === "Agendado";
             order.status = "Cancelada";
             await saveOrder(order);
-            await restockOrder(order);
+            if(!eraAgendado) await restockOrder(order); // agendado nunca descontou estoque
             toast("Comanda #"+numero+" cancelada");
             this.refresh();
             await this.loadEstoqueMassa();
@@ -1736,10 +1933,20 @@
           }
         });
       });
+      listEl.querySelectorAll(".liberar-btn").forEach(btn=>{
+        bindOnce(btn, "click", async ()=>{
+          if(!confirm("Mandar este pedido para a produção agora?")) return;
+          const n = await liberarAgendados({ id: btn.dataset.id });
+          toast(n ? "Pedido enviado para a produção" : "Não consegui liberar o pedido");
+          this.refresh();
+          await this.loadEstoqueMassa();
+          await this.loadBebidasCache();
+        });
+      });
       listEl.querySelectorAll(".edit-btn").forEach(btn=>{
         bindOnce(btn, "click", async ()=>{
           const numero = parseInt(btn.dataset.numero,10);
-          const order = await getOrderByNumero(todayStr(), numero);
+          const order = await getOrderByNumero(btn.dataset.data || todayStr(), numero);
           this.openEditModal(order);
         });
       });
@@ -1803,6 +2010,7 @@
           <a class="home-link" href="#/">trocar tela</a>
         </header>
         <main>
+          <div id="ag-strip"></div>
           <h2>Aguardando <span class="count-badge" id="count-pendentes">0</span></h2>
           <div id="col-pendentes"></div>
         </main>
@@ -1822,12 +2030,20 @@
           ? `${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`
           : `${m}:${String(s).padStart(2,"0")}`;
         const card = el.closest(".order-card");
-        if(card) card.classList.toggle("late", secs > 15*60);
+        if(card && !el.classList.contains("forno-sw")) card.classList.toggle("late", secs > 15*60);
       });
     },
     async refresh(){
-      const orders = await getOrdersForDate(todayStr());
+      await checarAgendados();
+      const [orders, agendados] = await Promise.all([getOrdersForDate(todayStr()), getAgendados()]);
       const pendentes = orders.filter(o=>o.status==="Pendente");
+
+      const stripEl = this.root.querySelector("#ag-strip");
+      if(stripEl) setHtml(stripEl, agendados.length ? `
+        <div class="ag-strip"><h3>⏰ Agendados <span class="count-badge">${agendados.length}</span></h3>
+          ${agendados.map(o=>`
+          <div class="ag-item"><span><span class="when">${fmtAgenda(o.agendadoPara)}</span> &nbsp; #${o.numero} · ${admEsc(o.nome)} · ${admEsc(o.itens.map(it=>(it.quantidade>1?it.quantidade+"x ":"")+it.tamanho+" "+itemFlavorLabel(it)).join(", "))}</span><span class="cnt">${fmtFalta(o.agendadoPara)}</span></div>`).join("")}
+        </div>` : "");
 
       const currentIds = new Set(pendentes.map(o=>o.numero));
       if(!this.firstLoad){
@@ -1840,10 +2056,11 @@
       this.root.querySelector("#count-pendentes").textContent = pendentes.length;
 
       const pendEl = this.root.querySelector("#col-pendentes");
-      setHtml(pendEl, pendentes.length ? pendentes.map(o=>`
-        <div class="order-card">
+      setHtml(pendEl, pendentes.length ? pendentes.map(o=>{ const noForno = !!o.horarios.inicioProducao; return `
+        <div class="order-card${noForno ? " no-forno" : ""}">
+          ${noForno ? `<div class="forno-banner">🔥 NO FORNO · <span class="stopwatch forno-sw num" data-start="${o.horarios.inicioProducao}">0:00</span></div>` : ""}
           <div class="card-header">
-            <div class="numero">#${o.numero}</div>
+            <div class="numero">#${o.numero}${o.agendadoPara ? ` <span class="ag-pill ag-tag">⏰ AGENDADO ${fmtAgenda(o.agendadoPara).slice(-5)}</span>` : ""}</div>
             <div class="timer-pill">⏱ <span class="stopwatch num" data-start="${o.horarios.pedido}">0:00</span></div>
           </div>
           ${o.itens.map(it=>`
@@ -1856,12 +2073,27 @@
           ${o.bebidas.length ? `<div class="meta">🥤 ${orderBebidasSummary(o)}</div>` : ""}
           <div class="footer">${o.nome} · ${fmtMoney(o.valor)}</div>
           <div class="actions">
+            ${noForno ? `
+            <button class="success ready-btn" data-numero="${o.numero}">✅ Pronta (saiu do forno)</button>
+            <button class="ghost unforno-btn" data-numero="${o.numero}">↩ Tirar do forno</button>
+            <button class="ghost" data-print="${o.numero}" title="Imprimir comanda">🖨 Imprimir</button>` : `
+            <button class="forno-btn" data-numero="${o.numero}">🔥 Forno</button>
             <button class="success ready-btn" data-numero="${o.numero}">Marcar como pronta</button>
             <button class="ghost" data-print="${o.numero}" title="Imprimir comanda">🖨 Imprimir</button>
-            <button class="danger-btn cancel-btn" data-numero="${o.numero}">Cancelar</button>
+            <button class="danger-btn cancel-btn" data-numero="${o.numero}">Cancelar</button>`}
           </div>
         </div>
-      `).join("") : '<div class="empty">Nenhum pedido aguardando.</div>');
+      `;}).join("") : '<div class="empty">Nenhum pedido aguardando.</div>');
+
+      const setForno = async (btn, valor)=>{
+        const order = await getOrderByNumero(todayStr(), parseInt(btn.dataset.numero,10));
+        if(!order) return;
+        order.horarios.inicioProducao = valor;
+        await saveOrder(order);
+        this.refresh();
+      };
+      pendEl.querySelectorAll(".forno-btn").forEach(btn=> bindOnce(btn, "click", ()=> setForno(btn, new Date().toISOString())));
+      pendEl.querySelectorAll(".unforno-btn").forEach(btn=> bindOnce(btn, "click", ()=> setForno(btn, null)));
 
       pendEl.querySelectorAll(".ready-btn").forEach(btn=>{
         bindOnce(btn, "click", async ()=>{
@@ -2503,7 +2735,7 @@
       return [d, d];
     },
     cmpLabel(){ return this.period==="dia" ? "dia anterior" : this.period==="semana" ? "semana anterior" : this.period==="mes" ? "mês anterior" : "período anterior de mesmo tamanho"; },
-    async buscar(s, e){ return s === e ? getOrdersForDate(s) : getOrdersForRange(s, e); },
+    async buscar(s, e){ const r = await (s === e ? getOrdersForDate(s) : getOrdersForRange(s, e)); return r.filter(o=>o.status!=="Agendado"); },
     async refresh(){
       if(!this.root || !this.root.querySelector("#admin-range-label")) return;
       const [start, end] = this.getRange();
@@ -4131,6 +4363,47 @@
   }
 
   carregarHoraVirada().then(h=>{ if(h !== HORA_VIRADA_ANTES) route(); });
+
+  /* ---------- Aviso de nova versão do sistema ---------- */
+  const Versao = {
+    atual: (document.querySelector('meta[name="app-version"]')||{}).content || "dev",
+    adiado: 0, nova: null,
+    ativo(){ return /^https?:$/.test(location.protocol) && this.atual !== "dev"; },
+    async checar(){
+      if(!this.ativo() || document.hidden) return;
+      try{
+        // só os primeiros bytes da página (a versão fica no começo); se o servidor não aceitar, vem a página inteira
+        const r = await fetch(location.pathname + "?c=" + Date.now(), { cache:"no-store", headers:{ Range:"bytes=0-2047" } });
+        const t = (await r.text()).slice(0, 4096);
+        const m = t.match(/name="app-version"\s+content="([^"]+)"/);
+        if(m && m[1] && m[1] !== "dev" && m[1] !== this.atual){ this.nova = m[1]; this.mostrar(); }
+      }catch(e){}
+    },
+    mostrar(){
+      if(Date.now() < this.adiado) return;
+      let el = document.getElementById("aviso-versao");
+      if(!el){
+        el = document.createElement("div");
+        el.id = "aviso-versao";
+        el.innerHTML = '<span>🔄 Tem uma versão nova do sistema.</span><button type="button" id="aviso-atualizar">Atualizar agora</button><button type="button" class="sec" id="aviso-depois">Depois</button>';
+        document.body.appendChild(el);
+        el.querySelector("#aviso-atualizar").addEventListener("click", ()=> this.atualizar());
+        el.querySelector("#aviso-depois").addEventListener("click", ()=>{ this.adiado = Date.now() + 10*60*1000; el.style.display = "none"; });
+      }
+      el.style.display = "flex";
+    },
+    atualizar(){
+      // muda o endereço (?v=) para o navegador não reaproveitar a versão antiga guardada
+      location.href = location.pathname + "?v=" + encodeURIComponent(this.nova || Date.now()) + location.hash;
+    },
+    iniciar(){
+      if(!this.ativo()) return;
+      setInterval(()=> this.checar(), 60000);
+      document.addEventListener("visibilitychange", ()=>{ if(!document.hidden) this.checar(); });
+      setTimeout(()=> this.checar(), 3000);
+    }
+  };
+  Versao.iniciar();
   window.addEventListener("hashchange", route);
   window.addEventListener("DOMContentLoaded", route);
   if(document.readyState !== "loading") route();
