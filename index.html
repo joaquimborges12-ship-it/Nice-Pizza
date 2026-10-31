@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="app-version" content="20261030-210849">
+<meta name="app-version" content="20261030-222129">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 <title>Pizzaria — Pedidos</title>
 <script>try{document.documentElement.setAttribute("data-theme", localStorage.getItem("tema")==="light"?"light":"dark");}catch(e){document.documentElement.setAttribute("data-theme","dark");}</script>
@@ -485,6 +485,43 @@
   .cli-pop-links{display:flex;gap:6px;margin-top:8px;}
   .cli-pop-links a{font-size:12px;font-weight:600;text-decoration:none;color:var(--tomato-dark);border:1px solid var(--line);padding:4px 8px;}
   /* Mapas no tema escuro */
+
+  .zn-steps{display:flex;margin-bottom:14px;}
+  .zn-step{flex:1;padding:10px 14px;background:var(--card);border:1px solid var(--line);font-size:14px;color:var(--ink-soft);display:flex;gap:8px;align-items:center;}
+  .zn-step b{width:24px;height:24px;display:grid;place-items:center;background:var(--line);color:var(--ink);font-size:13px;flex:none;}
+  .zn-step.on{border-color:#6c8cff;color:var(--ink);background:rgba(108,140,255,.12);} .zn-step.on b{background:#6c8cff;color:#fff;}
+  .zn-step.done b{background:#3fb36b;color:#fff;} .zn-step.soon{opacity:.5;}
+  .zn-grid{display:grid;grid-template-columns:1fr 340px;gap:14px;align-items:start;}
+  @media (max-width:900px){.zn-grid{grid-template-columns:1fr;}}
+  .zn-map{position:relative;border:1px solid var(--line);overflow:hidden;}
+  .zn-aviso{position:absolute;inset:0;display:grid;place-items:center;padding:20px;background:var(--card);}
+  .zn-side .panel{margin:0 0 12px;} .zn-btn{width:100%;text-align:left;margin:0 0 8px;} .zn-coord{font-family:ui-monospace,monospace;font-size:13px;color:var(--ink-soft);}
+  .zn-pend{border-color:#e8c030;}
+  .zc{display:grid;grid-template-columns:34px 1fr 74px 26px;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);}
+  .zc input{margin:0;padding:6px 8px;font-size:14px;} .zc .zc-cor{padding:0;height:32px;width:34px;border:none;background:none;cursor:pointer;} .zc .km{text-align:right;} .zc .x{color:var(--ink-soft);text-align:center;}
+  .zc .cnt{grid-column:2 / -1;font-size:12px;color:var(--ink-soft);margin-top:-4px;}
+  .zn-sem{max-height:260px;overflow:auto;} .zn-sem-it{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line);cursor:grab;font-size:14px;}
+  .zn-sem-it .ghost{padding:4px 8px;font-size:12px;white-space:nowrap;}
+  .zn-cli{width:16px;height:16px;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.6);border-radius:50%;cursor:grab;}
+  .zt{width:100%;border-collapse:collapse;font-size:14px;} .zt th{text-align:right;font-weight:600;color:var(--ink-soft);font-size:12px;padding:8px 10px;border-bottom:1px solid var(--line);} .zt td{text-align:right;padding:10px;border-bottom:1px solid var(--line);} .zt th:first-child,.zt td:first-child{text-align:left;}
+  .zt i{display:inline-block;width:12px;height:12px;margin-right:8px;vertical-align:-1px;} .zt .ok,.zm .ok{color:#3fb36b;font-weight:700;} .zt .bad{color:#ff5a4f;font-weight:700;} .zt .mut,.zm .mut{color:var(--ink-soft);}
+  .zm{display:grid;grid-template-columns:22px 1fr 64px 64px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);} .zm input{margin:0;padding:6px 8px;text-align:right;font-size:14px;} .zm i{width:20px;height:20px;display:block;}
+  .per{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;} .per span{padding:6px 12px;border:1px solid var(--line);font-size:13px;background:var(--card);cursor:pointer;} .per .on{border-color:#6c8cff;background:rgba(108,140,255,.15);}
+  .zn-faixa{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 12px;margin:0 0 12px;} .zn-faixa .ghost,.zn-faixa .primary{padding:5px 10px;font-size:13px;width:auto;}
+  .zn-grid{grid-template-columns:1fr 430px !important;} @media (max-width:900px){.zn-grid{grid-template-columns:1fr !important;}}
+  .zu{display:grid;grid-template-columns:30px 1fr 52px 52px 52px 20px;gap:6px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);} .zu input{margin:0;padding:6px;font-size:14px;text-align:right;min-width:0;} .zu input.n{text-align:left;} .zu .c{width:26px;height:26px;padding:0;border:none;background:none;cursor:pointer;} .zu .cnt{grid-column:2 / -1;font-size:12px;color:var(--ink-soft);margin-top:-2px;} .zh{font-size:11px;color:var(--ink-soft);text-align:right;line-height:1.2;}
+  .seg{display:flex;} .seg span{flex:1;text-align:center;padding:6px;border:1px solid var(--line);font-size:13px;background:var(--card);cursor:pointer;} .seg .on{border-color:#6c8cff;background:rgba(108,140,255,.15);}
+  .zt th{font-size:11px;padding:8px 6px;} .zt td{padding:9px 6px;font-size:13px;}
+  .card{background:var(--card);border:1px solid var(--line);padding:16px 18px;margin-bottom:14px;} .card h3{margin:0 0 12px;font-size:15px;color:var(--ink-soft);font-weight:600;letter-spacing:.02em;}
+  .card.zn-pend{border-color:#e8c030;} .btns{display:flex;gap:8px;flex-wrap:wrap;} .btns button{padding:7px 11px;font-size:13px;width:auto;}
+  .zr{display:grid;grid-template-columns:28px 1fr 56px 56px 56px 18px;gap:6px;align-items:center;padding:7px 0;} .zr input{margin:0;padding:7px 6px;font-size:14px;text-align:right;min-width:0;} .zr input.n{text-align:left;} .zr .c{width:24px;height:24px;padding:0;border:none;background:none;cursor:pointer;} .zr.h{font-size:11px;color:var(--ink-soft);text-align:right;padding-bottom:0;line-height:1.2;}
+  .zc3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:14px;} .zk{background:var(--card);border:1px solid var(--line);border-top:4px solid;padding:16px 18px;} .zk.sel{box-shadow:0 0 0 2px #6c8cff;} .zk h4{margin:0;font-size:16px;display:flex;justify-content:space-between;} .zk .big{font-size:30px;font-weight:700;margin:10px 0 2px;} .zk .sub{font-size:12px;color:var(--ink-soft);} .bar{height:8px;background:var(--line);margin:10px 0 4px;} .bar i{display:block;height:100%;} .zk .row{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:6px 0;border-top:1px solid var(--line);margin-top:8px;} .zk .row input{width:84px;margin:0;padding:4px 8px;text-align:right;font-size:14px;}
+  .mut{color:var(--ink-soft);}
+  .tx-box{border:1px solid var(--line);background:rgba(255,255,255,.03);padding:12px 14px;margin-bottom:12px;}
+  .tx-r{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:14px;gap:8px;} .tx-r small{color:var(--ink-soft);display:block;font-size:12px;} .tx-r small i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;}
+  .tx-t{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);margin-top:6px;padding-top:10px;font-size:16px;font-weight:700;} .tx-t input{width:130px;margin:0;text-align:right;font-size:18px;font-weight:700;}
+  .tx-r a{color:#6c8cff;font-size:12px;cursor:pointer;margin-left:8px;} .tx-zero{color:var(--ink-soft);}
+  .zn-rot{font-size:13px;font-weight:700;text-shadow:0 0 3px #000,0 0 3px #000;white-space:nowrap;pointer-events:none;}
   :root[data-theme="dark"] .maplibregl-canvas{filter:invert(1) hue-rotate(180deg) brightness(.95) contrast(.9);}
   /* prefixo .maplibregl-map para ganhar do CSS da biblioteca, que é carregado depois */
   .maplibregl-map .maplibregl-popup-content{background:var(--card);color:var(--ink);border-radius:0;box-shadow:0 2px 10px rgba(0,0,0,.35);}
@@ -553,6 +590,7 @@
       pagamentos: Array.isArray(row.pagamentos) ? row.pagamentos : null, _colPag: ("pagamentos" in row),
       agendadoPara: row.agendado_para || null, _colAg: ("agendado_para" in row),
       entregaLat: row.entrega_lat, entregaLng: row.entrega_lng,
+      taxaEntrega: Number(row.taxa_entrega)||0, _colTaxa: ("taxa_entrega" in row),
       itens: [], bebidas: [],
       horarios: {
         pedido: row.horario_pedido, inicioProducao: row.horario_inicio_producao,
@@ -568,6 +606,7 @@
       pix_confirmado: !!order.pixConfirmado, foto_cliente_url: order.fotoClienteUrl||"",
       ...((order._colPag || (order.pagamentos && order.pagamentos.length>1)) ? { pagamentos: (order.pagamentos && order.pagamentos.length>1) ? order.pagamentos : null } : {}),
       ...((order.agendadoPara || order._colAg) ? { agendado_para: order.agendadoPara || null } : {}),
+      ...((order.taxaEntrega > 0 || order._colTaxa) ? { taxa_entrega: order.taxaEntrega||0 } : {}),
       entrega_lat: order.entregaLat != null ? order.entregaLat : null,
       entrega_lng: order.entregaLng != null ? order.entregaLng : null,
       horario_pedido: order.horarios.pedido, horario_inicio_producao: order.horarios.inicioProducao,
@@ -629,6 +668,7 @@
     return _todosCache.rows;
   }
 
+  const vendaDe = o=> (Number(o.valor)||0) - (Number(o.taxaEntrega)||0); // venda sem a taxa de entrega
   function fmtMoney(v){
     const n = Number(v)||0;
     return "R$ " + n.toLocaleString("pt-BR", {minimumFractionDigits:2, maximumFractionDigits:2});
@@ -754,6 +794,7 @@
       nome:orderData.nome, telefone:orderData.telefone, endereco:orderData.endereco, linkMaps:orderData.link_maps||"",
       pagamento:orderData.pagamento, pagamentos:orderData.pagamentos||null, troco:orderData.troco||"", valor:parseFloat(String(orderData.valor||"0").replace(",", "."))||0,
       status: agend ? "Agendado" : "Pendente", agendadoPara: agend ? agend.toISOString() : null,
+      taxaEntrega: Math.max(0, parseFloat(orderData.taxa)||0),
       pixConfirmado:false, fotoClienteUrl:orderData.fotoClienteUrl||"",
       horarios:{ pedido:new Date().toISOString(), inicioProducao:null, pronta:null, saida:null, entrega:null }
     };
@@ -1110,6 +1151,7 @@
         ${o.telefone?`<div>Tel: ${e(o.telefone)}</div>`:""}
         ${o.endereco?`<div>${e(o.endereco)}</div>`:""}
         <hr>${pizzas}${bebidas}<hr>
+        ${o.taxaEntrega>0?`<div class="it" style="display:flex;justify-content:space-between"><span>Pizzas e bebidas</span><span>${fmtMoney((Number(o.valor)||0)-o.taxaEntrega)}</span></div><div class="it" style="display:flex;justify-content:space-between"><span>Taxa de entrega</span><span>${fmtMoney(o.taxaEntrega)}</span></div>`:""}
         <div class="tot"><span>TOTAL</span><span>${fmtMoney(o.valor)}</span></div>
         <div>Pagamento: ${e(pagLabel(o))}</div>
         ${o.troco?`<div>Troco para: ${e(o.troco)}</div>`:""}
@@ -1280,7 +1322,7 @@
   /* ================= ATENDENTE ================= */
   const Atendente = {
     root:null, clientsCache:[], saboresCache:[], bebidasCache:[], bordasCache:[],
-    selectedClientId:null, valorManualmenteEditado:false,
+    selectedClientId:null, valorManualmenteEditado:false, taxa:0, taxaZona:null, taxaManual:null, txEdit:false, subtotal:0,
     pizzaItems:[], bebidaItems:[], estoqueMassa:{M:0,G:0},
     rastreamentoAtivo:false, rastreamentoMap:null, rastreamentoMarker:null,
     async render(root){
@@ -1352,9 +1394,10 @@
 
                     <div class="form-section">
                       <div class="section-title">4. Pagamento</div>
-                      <div class="field">
-                        <label>Valor total (R$)</label>
-                        <input name="valor" type="number" step="0.01" min="0" placeholder="0,00" required>
+                      <div class="tx-box">
+                        <div class="tx-r"><span>Pizzas e bebidas</span><span id="tx-sub">R$ 0,00</span></div>
+                        <div class="tx-r" id="tx-linha"></div>
+                        <div class="tx-t"><span>TOTAL (R$)</span><input name="valor" type="number" step="0.01" min="0" placeholder="0,00" required></div>
                       </div>
                       <div class="field">
                         <label>Forma de pagamento</label>
@@ -1492,6 +1535,8 @@
         root.querySelector("#troco-field").style.display = tem ? "block" : "none";
       });
       totalInput.addEventListener("input", ()=> this.pagCtl.atualizar());
+      Zoneamento.carregar().then(()=> this.atualizarTaxa());
+      root.querySelector('[name="link_maps"]').addEventListener("input", ()=>{ this.taxaManual = null; this.atualizarTaxa(); });
 
       // Enter avança pro próximo campo em vez de enviar o formulário (agiliza digitação)
       const orderForm = root.querySelector("#order-form");
@@ -1608,6 +1653,7 @@
           agendadoPara = quando.toISOString();
         }
         data.agendadoPara = agendadoPara;
+        data.taxa = this.taxa || 0;
 
         const matchedClient = this.clientsCache.find(c => c.id === normalizePhone(data.telefone));
         data.fotoClienteUrl = matchedClient ? (matchedClient.foto_url||"") : "";
@@ -1629,6 +1675,7 @@
         root.querySelector("#salvar-cliente").checked = true;
         this.selectedClientId = null;
         this.valorManualmenteEditado = false;
+        this.taxaManual = null; this.txEdit = false; this.atualizarTaxa();
         root.querySelector("#selected-client-box").innerHTML = "";
         this.pizzaItems = [emptyPizzaItem()];
         this.bebidaItems = [];
@@ -1648,7 +1695,7 @@
         try{ await enviarPedido(e); }
         catch(err){
           console.error(err);
-          toast(this._agendando ? "Não consegui agendar. Rode o arquivo add-agendamento.sql no Supabase." : "Não consegui enviar o pedido. Tente de novo.");
+          toast(this._agendando ? "Não consegui agendar. Rode o arquivo add-agendamento.sql no Supabase." : (this.taxa > 0 ? "Não consegui enviar. Rode o arquivo add-taxa-entrega.sql no Supabase." : "Não consegui enviar o pedido. Tente de novo."));
         }
         finally { this._enviando = false; if(btn) btn.disabled = false; }
       });
@@ -1821,6 +1868,34 @@
         });
       });
     },
+    atualizarTaxa(){
+      const box = this.root && this.root.querySelector("#tx-linha"); if(!box) return;
+      const Z = Zoneamento, zs = Z.ordenados();
+      const cli = this.clientsCache.find(c=> c.id === this.selectedClientId);
+      let pos = cli ? Z.posDe(cli) : null;
+      if(!pos) pos = coordsFromMapsUrl((this.root.querySelector('[name="link_maps"]')||{}).value);
+      let taxa = 0, info = "";
+      this.taxaZona = null;
+      if(this.taxaManual){ taxa = this.taxaManual.taxa; info = this.taxaManual.rot; }
+      else info = "sem taxa";   // padrão: só cobra se a atendente escolher a zona em "alterar"
+      this.taxa = taxa;
+      const semPos = false;
+      if(this.txEdit || semPos){
+        box.className = "tx-r";
+        box.innerHTML = `<span>Taxa de entrega<small>Escolha a zona</small></span><span><select id="tx-sel" style="width:auto;margin:0;padding:4px 8px;font-size:13px"><option value="">Escolher zona…</option>${zs.map(z=>`<option value="${z.id}">${admEsc(z.nome)} · ${fmtMoney(Number(z.taxa)||0)}</option>`).join("")}<option value="0">Sem taxa</option></select></span>`;
+        box.querySelector("#tx-sel").onchange = e=>{
+          const v = e.target.value; if(!v) return;
+          const z = zs.find(x=>x.id===v);
+          this.taxaManual = z ? { taxa:Number(z.taxa)||0, rot:`<i style="background:${z.cor}"></i>Zona ${admEsc(z.nome)}` } : { taxa:0, rot:"sem taxa" };
+          this.txEdit = false; this.atualizarTaxa();
+        };
+      } else {
+        box.className = "tx-r" + (taxa > 0 ? "" : " tx-zero");
+        box.innerHTML = `<span>Taxa de entrega<small>${info}</small></span><span>${fmtMoney(taxa)}${zs.length ? ' <a id="tx-alt">alterar</a>' : ""}</span>`;
+        const alt = box.querySelector("#tx-alt"); if(alt) alt.onclick = ()=>{ this.txEdit = true; this.atualizarTaxa(); };
+      }
+      this.recalcValor();
+    },
     recalcValor(){
       const form = this.root.querySelector("#order-form");
       if(!form) return;
@@ -1837,8 +1912,10 @@
         const blocks = this.root.querySelectorAll("#bebida-items-list .item-block");
         if(blocks[i]){ const span = blocks[i].querySelector(".bb-subtotal"); if(span) span.textContent = fmtMoney(it.valor); }
       });
+      this.subtotal = total;
+      const subEl = this.root.querySelector("#tx-sub"); if(subEl) subEl.textContent = fmtMoney(total);
       if(!this.valorManualmenteEditado){
-        form.querySelector('[name="valor"]').value = total.toFixed(2);
+        form.querySelector('[name="valor"]').value = (total + (this.taxa||0)).toFixed(2);
         if(this.pagCtl) this.pagCtl.atualizar();
       }
     },
@@ -1849,6 +1926,7 @@
       form.querySelector('[name="telefone"]').value = client.telefone;
       form.querySelector('[name="endereco"]').value = client.endereco;
       form.querySelector('[name="link_maps"]').value = client.link_maps || "";
+      this.taxaManual = null; this.txEdit = false; this.atualizarTaxa();
       this.root.querySelector("#selected-client-box").innerHTML = `
         <div class="selected-client">
           <span>Cliente: ${client.nome}</span>
@@ -1861,6 +1939,7 @@
         form.querySelector('[name="telefone"]').value = "";
         form.querySelector('[name="endereco"]').value = "";
         form.querySelector('[name="link_maps"]').value = "";
+        this.taxaManual = null; this.txEdit = false; this.atualizarTaxa();
         this.root.querySelector("#selected-client-box").innerHTML = "";
       });
     },
@@ -2570,12 +2649,13 @@
       (o.itens||[]).forEach(it=> pizzas += parseInt(it.quantidade)||1);
       (o.bebidas||[]).forEach(b=> bebidas += parseInt(b.quantidade)||1);
     });
-    const fat = validos.reduce((a,o)=> a+(Number(o.valor)||0), 0);
+    const fat = validos.reduce((a,o)=> a+vendaDe(o), 0);
+    const taxas = validos.reduce((a,o)=> a+(Number(o.taxaEntrega)||0), 0);
     const tempos = entreguesOk
       .map(o=> (o.horarios.pedido && o.horarios.entrega) ? (new Date(o.horarios.entrega)-new Date(o.horarios.pedido))/60000 : null)
       .filter(v=> v!==null && v>=0);
     return {
-      total:orders.length, validos:validos.length, cancelados:orders.length-validos.length, fat,
+      total:orders.length, validos:validos.length, cancelados:orders.length-validos.length, fat, taxas,
       ticket: validos.length ? fat/validos.length : 0, pizzas, bebidas,
       pizzasPorPedido: validos.length ? pizzas/validos.length : 0,
       entregues, entreguesOk, erros,
@@ -2788,6 +2868,7 @@
       const validos = orders.filter(o=>o.status!=="Cancelada");
       const kpis = `<div class="admin-summary">
         ${kpi("faturamento", fmtMoney(A.fat), delta(A.fat, P.fat))}
+        ${A.taxas > 0 ? kpi("taxas de entrega", fmtMoney(A.taxas)) : ""}
         ${kpi("pedidos (sem cancelados)", A.validos, delta(A.validos, P.validos))}
         ${kpi("pizzas vendidas", A.pizzas, delta(A.pizzas, P.pizzas))}
         ${kpi("ticket médio", fmtMoney(A.ticket), delta(A.ticket, P.ticket))}
@@ -2803,12 +2884,12 @@
         grafico = painel("Pedidos por hora", this.graficoHoras(validos, o=>1, n=>String(n)), "quantidade de pedidos em cada hora do dia");
       } else {
         const dias = []; for(let d=start; d<=end; d=addDias(d,1)) dias.push(d);
-        const porDia = {}; validos.forEach(o=>{ porDia[o.date] = (porDia[o.date]||0) + (Number(o.valor)||0); });
+        const porDia = {}; validos.forEach(o=>{ porDia[o.date] = (porDia[o.date]||0) + vendaDe(o); });
         const itens = dias.map(d=>({ label: DIAS_SEMANA[parseYMD(d).getDay()]+" "+fmtDateBR(d), val: porDia[d]||0 }));
         grafico = painel("Faturamento por dia", vbars(itens, v=>"R$ "+Math.round(v), dias.length<=10), "total vendido em cada dia do período");
       }
       const sab = contaSabores(validos);
-      const clientes = somaPorChave(validos, o=> normalizePhone(o.telefone)||o.nome, o=>Number(o.valor)||0);
+      const clientes = somaPorChave(validos, o=> normalizePhone(o.telefone)||o.nome, o=>vendaDe(o));
       const nomeDe = {}; validos.forEach(o=>{ nomeDe[normalizePhone(o.telefone)||o.nome] = o.nome; });
       const horas = somaPorChave(validos, o=> o.horarios.pedido ? new Date(o.horarios.pedido).getHours() : null, o=>1);
       const dest = [];
@@ -2882,10 +2963,10 @@
       validos.forEach(o=>{
         const id = normalizePhone(o.telefone) || ("nome:"+String(o.nome||"").toLowerCase());
         const c = mapa[id] || (mapa[id] = { id, nome:o.nome, telefone:o.telefone, pedidos:0, gasto:0, ultima:o.date, primeira:o.date, pPed:0, pGasto:0 });
-        c.pedidos++; c.gasto += Number(o.valor)||0;
+        c.pedidos++; c.gasto += vendaDe(o);
         if(o.date > c.ultima){ c.ultima = o.date; c.nome = o.nome; c.telefone = o.telefone; }
         if(o.date < c.primeira) c.primeira = o.date;
-        if(o.date >= start && o.date <= end){ c.pPed++; c.pGasto += Number(o.valor)||0; }
+        if(o.date >= start && o.date <= end){ c.pPed++; c.pGasto += vendaDe(o); }
       });
       const todosC = Object.values(mapa);
       const noPer = todosC.filter(c=>c.pPed>0);
@@ -2942,7 +3023,7 @@
       recentes.forEach(o=>{
         const dow = parseYMD(o.date).getDay();
         const g = grp[dow] || (grp[dow] = { datas:new Set(), ped:0, fat:0 });
-        g.datas.add(o.date); g.ped++; g.fat += Number(o.valor)||0;
+        g.datas.add(o.date); g.ped++; g.fat += vendaDe(o);
       });
       const diasItens = [1,2,3,4,5,6,0].filter(d=>grp[d]).map(d=>({ label:DIAS_SEMANA[d], val:grp[d].fat/grp[d].datas.size, extra:fmtNum(grp[d].ped/grp[d].datas.size)+" pedidos/dia" }));
       return tempos + `<div class="adm-grid">
@@ -4005,7 +4086,7 @@
   /* ================= LOGIN / PERFIS ================= */
   const PERFIS = {
     dono:       { nome:"Administrador",       desc:"vê tudo (Administração, Cardápio e Estoque, Configurações)", inicio:"atendente",
-                  telas:["atendente","producao","entregador","entregador-app","clientes","admin","estoque","config"] },
+                  telas:["atendente","producao","entregador","entregador-app","clientes","admin","estoque","zoneamento","config"] },
     atendente:  { nome:"Atendente",  desc:"lança pedidos, usa Clientes e preenche o Estoque do dia", inicio:"atendente", telas:["atendente","clientes","estoque"] },
     cozinha:    { nome:"Cozinha",    desc:"Produção e Estoque do dia", inicio:"producao", telas:["producao","estoque"] },
     entregador: { nome:"Entregador", desc:"só o app do entregador", inicio:"entregador-app", telas:["entregador-app"] }
@@ -4209,6 +4290,333 @@
     }
   };
 
+  /* ================= ZONEAMENTO ================= */
+  const ZN_CENTRO = [-52.2064, -3.2033];
+  const ZN_CORES = ["#3fb36b","#e8c030","#ff7a2f","#ff3b30","#4a7bff","#a855f7","#14b8a6","#ec4899"];
+  const Zoneamento = {
+    periodo:7, entregas:[], mEnt:[], root:null, map:null, aba:"cfg", selZona:null, vista:"cfg", cfg:{ base:null, circulos:[] }, clientes:[], mCli:[], mBase:null,
+    pend:null, modo:null, orig:{}, mostrar:true, semColunas:false,
+    padrao(){ return [ {id:"c1",nome:"Rápida",cor:ZN_CORES[0],km:1.5}, {id:"c2",nome:"Intermediária",cor:ZN_CORES[1],km:3}, {id:"c3",nome:"Demorada",cor:ZN_CORES[3],km:5} ]; },
+    async carregar(){
+      let v = null;
+      try{ const { data, error } = await supabase.from("configuracoes").select("valor").eq("id","zoneamento").maybeSingle(); if(!error && data) v = JSON.parse(data.valor); }catch(e){}
+      if(!v){ try{ v = JSON.parse(localStorage.getItem("zoneamento")); }catch(e){} }
+      if(v && typeof v === "object"){
+        this.cfg = { base: (v.base && isFinite(v.base.lat) && isFinite(v.base.lng)) ? v.base : null, circulos: Array.isArray(v.circulos) ? v.circulos : [] };
+      }
+      if(!this.cfg.circulos.length) this.cfg.circulos = this.padrao();
+    },
+    async salvarCfg(){
+      const txt = JSON.stringify(this.cfg);
+      try{ localStorage.setItem("zoneamento", txt); }catch(e){}
+      try{ const { error } = await supabase.from("configuracoes").upsert({ id:"zoneamento", valor:txt }); return !error; }catch(e){ return false; }
+    },
+    dist(a, b){
+      const R = 6371, rad = x=>x*Math.PI/180;
+      const dLa = rad(b.lat-a.lat), dLn = rad(b.lng-a.lng);
+      const h = Math.sin(dLa/2)**2 + Math.cos(rad(a.lat))*Math.cos(rad(b.lat))*Math.sin(dLn/2)**2;
+      return 2*R*Math.asin(Math.sqrt(h));
+    },
+    posDe(c){
+      const link = (c.link_maps||"").trim();
+      if(c.lat != null && c.lng != null && (!link || c.geo_link === link)) return { lat:Number(c.lat), lng:Number(c.lng) };
+      return coordsFromMapsUrl(link);
+    },
+    ordenados(){ return this.cfg.circulos.filter(c=>c.km>0).slice().sort((a,b)=>a.km-b.km); },
+    zonaDe(p){
+      if(!this.cfg.base || !p) return null;
+      const d = this.dist(this.cfg.base, p);
+      return this.ordenados().find(c=> d <= c.km) || null;
+    },
+    async render(root){
+      this.root = root; this.pend = null; this.modo = null;
+      if(this.map){ try{ this.map.remove(); }catch(e){} this.map = null; }
+      root.innerHTML = `
+        <header class="topbar"><div><h1>🧭 Zoneamento</h1><div class="tag">Zonas de entrega a partir da pizzaria</div></div><a class="home-link" href="#/">trocar tela</a></header>
+        <main><div class="zn-steps" id="zn-tabs" style="margin-bottom:16px"></div><div id="zn-body"></div></main>`;
+      await this.carregar();
+      this.clientes = await getClients();
+      this.orig = {};
+      this.clientes.forEach(c=>{ const p = this.posDe(c); if(p) this.orig[c.id] = p; });
+      await this.carregarEntregas();
+      this.trocarAba(this.cfg.base ? "ana" : "cfg");
+    },
+    trocarAba(a){
+      this.aba = a; this.pend = null; this.modo = null; this.selZona = null; this.vista = "cfg"; this.mapaPronto = false;
+      if(this.map){ try{ this.map.remove(); }catch(e){} this.map = null; }
+      this.mBase = null; this.mCli = []; this.mEnt = []; this.mRot = []; this.camadas = [];
+      this.root.querySelector("#zn-tabs").innerHTML = [["cfg","⚙","Configuração"],["ana","📊","Análise"]].map(([k,i,t])=>`<div class="zn-step${this.aba===k?" on":""}" data-aba="${k}" style="flex:none;min-width:190px;cursor:pointer"><b>${i}</b>${t}</div>`).join("");
+      this.root.querySelectorAll("#zn-tabs [data-aba]").forEach(el=> el.onclick = ()=>{ if(el.dataset.aba !== this.aba) this.trocarAba(el.dataset.aba); });
+      const body = this.root.querySelector("#zn-body");
+      if(a === "cfg"){
+        body.innerHTML = `<div class="zn-grid"><div class="zn-map"><div id="zn-mapa" style="height:620px"></div><div class="zn-aviso" id="zn-aviso" style="display:none"></div></div><div class="zn-side" id="zn-side"></div></div>`;
+      } else {
+        body.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px;flex-wrap:wrap"><div class="per" id="zn-per"></div><div class="tag" id="zn-info"></div></div>
+          <div class="zn-map"><div id="zn-mapa" style="height:560px"></div><div class="zn-aviso" id="zn-aviso" style="display:none"></div></div><div class="zc3" id="zn-cards"></div>`;
+      }
+      this.desenharPainel();
+      this.iniciarMapa();
+    },
+    async carregarEntregas(){
+      let todos = [];
+      try{ todos = await getTodosPedidos(); }catch(e){}
+      const tel = {}; this.clientes.forEach(c=>{ const d = (c.telefone||"").replace(/\D/g,""); if(d) tel[d] = c; });
+      this.entregas = todos.filter(o=> o.status==="Entregue" && o.horarios && o.horarios.pedido && o.horarios.entrega).map(o=>{
+        let pos = null;
+        const c = tel[(o.telefone||"").replace(/\D/g,"")];
+        if(c) pos = this.posDe(c);                       // 1) local cadastrado do cliente
+        if(!pos) pos = coordsFromMapsUrl(o.linkMaps);     // 2) link do Maps do próprio pedido
+        if(!pos && o.entregaLat != null && o.entregaLng != null) pos = { lat:Number(o.entregaLat), lng:Number(o.entregaLng) }; // 3) último recurso: GPS da entrega
+        const tot = (new Date(o.horarios.entrega) - new Date(o.horarios.pedido))/60000;
+        const rota = o.horarios.saida ? (new Date(o.horarios.entrega) - new Date(o.horarios.saida))/60000 : null;
+        return { data:o.date, pos, tot, rota, numero:o.numero, nome:o.nome };
+      }).filter(e=> e.tot >= 0 && e.tot < 600);
+    },
+    metaT(z){ return z && z.metaTotal > 0 ? z.metaTotal : META_ENTREGA_MIN; },
+    metaR(z){ return z && z.metaRota > 0 ? z.metaRota : Math.max(1, Math.round(this.metaT(z)*0.45)); },
+    entregasPeriodo(){
+      if(this.periodo === 0) return this.entregas;
+      const ini = this.periodo === 1 ? todayStr() : daysAgo(this.periodo-1);
+      return this.entregas.filter(e=> e.data >= ini);
+    },
+    pintarEntregas(){
+      if(!this.map) return;
+      this.mEnt.forEach(m=>m.remove()); this.mEnt = [];
+      if(this.aba !== "ana") return;
+      this.entregasPeriodo().forEach(e=>{
+        if(!e.pos) return;
+        const z = this.zonaDe(e.pos);
+        const el = document.createElement("div"); el.className = "zn-cli"; el.style.cursor = "default";
+        el.style.background = (z && e.tot > this.metaT(z)) ? "#ff3b30" : "#3fb36b";
+        const popup = new maplibregl.Popup({ offset:10 }).setHTML(`<b>#${e.numero} · ${admEsc(e.nome)}</b><br><span style="font-size:12px">${Math.round(e.tot)} min${z ? " (meta "+this.metaT(z)+")" : ""}</span>`);
+        this.mEnt.push(new maplibregl.Marker({ element:el }).setLngLat([e.pos.lng,e.pos.lat]).setPopup(popup).addTo(this.map));
+      });
+    },
+    tabela(){
+      const box = this.root.querySelector("#zn-tab");
+
+      const lista = this.entregasPeriodo(), zs = this.ordenados();
+      const por = {}; zs.forEach(z=> por[z.id] = []); const fora = [];
+      lista.forEach(e=>{ const z = this.zonaDe(e.pos); if(z) por[z.id].push(e); else fora.push(e); });
+      const med = a=> a.length ? a.reduce((x,y)=>x+y,0)/a.length : null;
+      const mm = v=> v==null ? "—" : Math.round(v)+" min";
+      const pc = (a, f)=> a.length ? Math.round(a.filter(f).length/a.length*100) : null;
+      const cl = p=> p==null ? "mut" : (p>=80 ? "ok" : (p<60 ? "bad" : ""));
+      const pt = p=> p==null ? "—" : p+"%";
+      const linhas = zs.map(z=>{
+        const l = por[z.id], r = l.filter(e=>e.rota!=null);
+        const p1 = pc(l, e=>e.tot<=this.metaT(z)), p2 = pc(r, e=>e.rota<=this.metaR(z));
+        return `<tr><td><i style="background:${z.cor}"></i>${admEsc(z.nome)}</td><td>${l.length}</td><td>${mm(med(l.map(e=>e.tot)))}</td><td class="${cl(p1)}">${pt(p1)}</td><td>${l.length?mm(Math.max(...l.map(e=>e.tot))):"—"}</td><td>${mm(med(r.map(e=>e.rota)))}</td><td class="${cl(p2)}">${pt(p2)}</td></tr>`;
+      }).join("");
+      const nomes = {1:"hoje",7:"últimos 7 dias",30:"últimos 30 dias",0:"todo o período"};
+      box.innerHTML = `<h2>Resultado por zona · ${nomes[this.periodo]}</h2><div style="overflow-x:auto"><table class="zt"><thead><tr><th>Zona</th><th>Entregas</th><th>Médio total</th><th>% na meta</th><th>Pior caso</th><th>Médio rota</th><th>% rota na meta</th></tr></thead><tbody>${linhas}<tr><td class="mut">Sem zona / fora</td><td>${fora.length}</td><td colspan="5" class="mut" style="text-align:left">${fora.length ? "entregas sem posição ou fora dos círculos" : "—"}</td></tr></tbody></table></div>${zs.length&&!this.cfg.base ? "" : ""}`;
+    },
+    iniciarMapa(){
+      const aviso = this.root.querySelector("#zn-aviso");
+      if(typeof maplibregl === "undefined"){ aviso.style.display = "block"; aviso.textContent = "Não consegui carregar o mapa. Verifique a internet e recarregue."; return; }
+      const b = this.cfg.base;
+      this.map = new maplibregl.Map({ container:"zn-mapa", style:"https://tiles.openfreemap.org/styles/liberty", center: b ? [b.lng,b.lat] : ZN_CENTRO, zoom: b ? 12 : 12 });
+      this.map.addControl(new maplibregl.NavigationControl());
+      this.map.on("click", e=> this.aoClicarMapa(e.lngLat));
+      this.map.on("load", ()=>{ this.mapaPronto = true; this.pintar(); });
+      const el = this.root.querySelector("#zn-mapa");
+      el.addEventListener("dragover", e=> e.preventDefault());
+      el.addEventListener("drop", e=>{
+        e.preventDefault();
+        const id = e.dataTransfer.getData("text/plain"); if(!id || !this.map) return;
+        const r = el.getBoundingClientRect();
+        const ll = this.map.unproject([e.clientX - r.left, e.clientY - r.top]);
+        this.propor(id, { lat:ll.lat, lng:ll.lng });
+      });
+      setTimeout(()=>{ if(this.map) this.map.resize(); }, 80);
+    },
+    circuloGeo(base, km){
+      const pts = [], n = 72, R = 6371, la = base.lat*Math.PI/180;
+      for(let i=0;i<=n;i++){
+        const a = i/n*2*Math.PI, dLa = (km/R)*Math.cos(a), dLn = (km/R)*Math.sin(a)/Math.cos(la);
+        pts.push([ base.lng + dLn*180/Math.PI, base.lat + dLa*180/Math.PI ]);
+      }
+      return { type:"Feature", geometry:{ type:"Polygon", coordinates:[pts] } };
+    },
+    pintar(){
+      if(!this.map) return;
+      this.pintarCirculos(); this.pintarBase(); this.pintarClientes(); this.pintarEntregas();
+    },
+    pintarCirculos(){
+      const m = this.map; if(!m || !this.mapaPronto) return;
+      (this.camadas||[]).forEach(id=>{ if(m.getLayer(id+"-f")) m.removeLayer(id+"-f"); if(m.getLayer(id+"-l")) m.removeLayer(id+"-l"); if(m.getSource(id)) m.removeSource(id); });
+      this.camadas = [];
+      (this.mRot||[]).forEach(x=>x.remove()); this.mRot = [];
+      const b = this.cfg.base; if(!b) return;
+      this.ordenados().reverse().forEach(c=>{
+        const id = "zn-"+c.id, g = this.circuloGeo(b, c.km);
+        m.addSource(id, { type:"geojson", data:g });
+        const sel = this.selZona, e1 = sel === c.id, ap = sel && !e1;
+        m.addLayer({ id:id+"-f", type:"fill", source:id, paint:{ "fill-color":c.cor, "fill-opacity": e1 ? .22 : (ap ? .04 : .12) } });
+        m.addLayer({ id:id+"-l", type:"line", source:id, paint:{ "line-color":c.cor, "line-width": e1 ? 4.5 : 3, "line-opacity": ap ? .4 : 1 } });
+        this.camadas.push(id);
+        const el = document.createElement("div"); el.className = "zn-rot"; el.style.color = c.cor; el.textContent = (c.nome||"") + " · " + String(c.km).replace(".",",") + " km";
+        this.mRot.push(new maplibregl.Marker({ element:el, anchor:"bottom" }).setLngLat(g.geometry.coordinates[0][0]).addTo(m));
+      });
+    },
+    pintarBase(){
+      if(!this.map) return;
+      if(this.mBase){ this.mBase.remove(); this.mBase = null; }
+      const b = this.cfg.base; if(!b) return;
+      this.mBase = new maplibregl.Marker({ color:"#ff3b30", draggable: this.aba === "cfg" }).setLngLat([b.lng,b.lat]).addTo(this.map);
+      this.mBase.on("dragend", ()=>{ const ll = this.mBase.getLngLat(); this.cfg.base = { lat:+ll.lat.toFixed(6), lng:+ll.lng.toFixed(6) }; this.salvarCfg(); this.pintarCirculos(); this.desenharPainel(); });
+    },
+    pintarClientes(){
+      if(!this.map) return;
+      this.mCli.forEach(x=>x.m.remove()); this.mCli = [];
+      if(this.aba !== "cfg" || this.vista !== "cli") return;
+      this.clientes.forEach(c=>{
+        const p = (this.pend && this.pend.id === c.id) ? this.pend.nova : this.posDe(c);
+        if(!p) return;
+        const z = this.zonaDe(p);
+        const el = document.createElement("div"); el.className = "zn-cli"; el.style.background = z ? z.cor : "#fff";
+        el.title = c.nome;
+        const popup = new maplibregl.Popup({ offset:12 }).setHTML(`<b>${admEsc(c.nome)}</b><br><span style="font-size:12px">${admEsc(c.endereco||"")}</span>${this.orig[c.id] ? `<br><button type="button" class="ghost zn-undo" data-id="${c.id}" style="margin-top:6px;padding:4px 8px;font-size:12px">↩ Voltar à posição original</button>` : ""}`);
+        const mk = new maplibregl.Marker({ element:el, draggable:true }).setLngLat([p.lng,p.lat]).setPopup(popup).addTo(this.map);
+        mk.on("dragend", ()=>{ const ll = mk.getLngLat(); this.propor(c.id, { lat:ll.lat, lng:ll.lng }); });
+        this.mCli.push({ id:c.id, m:mk });
+      });
+    },
+    propor(id, nova){
+      const c = this.clientes.find(x=>x.id===id); if(!c) return;
+      this.pend = { id, nova, antes: this.posDe(c) };
+      this.modo = null;
+      this.vista = "cli";
+      this.pintarClientes(); this.desenharPainel();
+    },
+    async confirmar(){
+      const pd = this.pend; if(!pd) return;
+      const c = this.clientes.find(x=>x.id===pd.id);
+      const lat = +pd.nova.lat.toFixed(6), lng = +pd.nova.lng.toFixed(6);
+      const link = "https://www.google.com/maps?q="+lat+","+lng;
+      const { error } = await supabase.from("clientes").update({ lat, lng, link_maps:link, geo_link:link }).eq("id", c.id);
+      if(error){ console.error(error); toast("Não consegui salvar. Rode o add-localizacao-clientes.sql no Supabase."); return; }
+      c.lat = lat; c.lng = lng; c.link_maps = link; c.geo_link = link;
+      this.pend = null;
+      toast("Posição de "+c.nome+" salva");
+      this.pintarClientes(); this.desenharPainel();
+    },
+    cancelar(){ this.pend = null; this.pintarClientes(); this.desenharPainel(); },
+    async desfazer(id){
+      const c = this.clientes.find(x=>x.id===id), o = this.orig[id]; if(!c || !o) return;
+      this.propor(id, { lat:o.lat, lng:o.lng });
+    },
+    aoClicarMapa(ll){
+      if(this.modo === "base"){ this.definirBase({ lat:ll.lat, lng:ll.lng }); this.modo = null; return; }
+      if(this.modo && this.modo.cli){ this.propor(this.modo.cli, { lat:ll.lat, lng:ll.lng }); return; }
+      if(this.aba === "cfg" && !this.cfg.base) this.definirBase({ lat:ll.lat, lng:ll.lng });
+    },
+    definirBase(p){
+      this.cfg.base = { lat:+p.lat.toFixed(6), lng:+p.lng.toFixed(6) };
+      this.salvarCfg().then(ok=>{ if(!ok) toast("Local salvo só neste aparelho — rode o SQL add-configuracoes.sql"); });
+      this.pintar(); this.desenharPainel();
+    },
+    contagens(){
+      const r = { por:{}, fora:0, sem:0 };
+      this.ordenados().forEach(c=> r.por[c.id] = 0);
+      this.clientes.forEach(c=>{
+        const p = this.posDe(c); if(!p){ r.sem++; return; }
+        const z = this.zonaDe(p); if(z) r.por[z.id]++; else r.fora++;
+      });
+      return r;
+    },
+    atualizarContagens(){ this.desenharPainel(); },
+    desenharPainel(){
+      if(!this.root) return;
+      if(this.aba === "ana") return this.painelAnalise();
+      const side = this.root.querySelector("#zn-side"); if(!side) return;
+      const b = this.cfg.base, ct = this.contagens();
+      const sem = this.clientes.filter(c=> !this.posDe(c) && !(this.pend && this.pend.id===c.id));
+      let h = `<div class="card"><h3>PIZZARIA</h3><div style="font-family:ui-monospace,monospace;font-size:14px;margin-bottom:12px">${b ? b.lat.toFixed(5)+", "+b.lng.toFixed(5) : "ainda não definida"}</div>
+        <div class="btns"><button type="button" class="ghost${b?"":" primary"}" id="zn-marcar">${this.modo==="base"?"● clique no mapa":"📍 Marcar no mapa"}</button><button type="button" class="ghost" id="zn-link">🔗 Colar link</button><button type="button" class="ghost" id="zn-gps">📡 Este aparelho</button></div></div>
+        <div class="card"><h3>ZONAS</h3><div class="zr h"><span></span><span style="text-align:left">Nome</span><span>Raio<br>km</span><span>Meta total<br>min</span><span>Meta rota<br>min</span><span></span></div>
+        ${this.cfg.circulos.map(z=>`<div class="zr" data-id="${z.id}"><input type="color" class="zc-cor c" value="${z.cor}"><input class="n zc-nome" value="${admEsc(z.nome)}"><input class="zc-km" type="number" min="0.1" step="0.1" value="${z.km}"><input class="zm-t" type="number" min="1" value="${this.metaT(z)}"><input class="zm-r" type="number" min="1" value="${this.metaR(z)}"><span class="zc-del mut" style="cursor:pointer;text-align:center" title="Remover">✕</span></div>`).join("")}
+        <button type="button" class="ghost" id="zn-add" style="width:100%;margin-top:8px">+ Adicionar zona</button><div class="tag" style="margin-top:10px">Meta total: pedido até entrega · Meta rota: saída até entrega</div></div>`;
+      if(this.pend){
+        const c = this.clientes.find(x=>x.id===this.pend.id);
+        h += `<div class="card zn-pend"><b>Salvar nova posição de ${admEsc(c?c.nome:"")}?</b><div class="tag" style="margin:4px 0 10px">Muda o cadastro, o Maps do pedido e o entregador.</div><div style="display:flex;gap:8px"><button type="button" class="primary" id="zn-ok" style="flex:1">✓ Salvar</button><button type="button" class="ghost" id="zn-no" style="flex:1">✕ Cancelar</button></div></div>`;
+      }
+      h += `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><div><h3 style="margin:0 0 4px">CLIENTES</h3><div style="font-size:13px"><b>${sem.length}</b> <span class="mut">sem localização</span> · <span class="mut">${ct.fora} fora das zonas</span></div></div><button type="button" class="ghost" id="zn-ajustar" style="padding:7px 11px;font-size:13px">${this.vista==="cli"?"Ocultar clientes":"Ajustar posições"}</button></div>
+        ${this.vista==="cli" ? `<div class="tag" style="margin:10px 0 4px">Arraste os pontinhos do mapa para corrigir. Para quem está sem localização, arraste o nome até o mapa ou use Posicionar.</div><div class="zn-sem">${sem.length ? sem.map(c=>`<div class="zn-sem-it" draggable="true" data-id="${c.id}"><span>${admEsc(c.nome)}</span><button type="button" class="ghost zn-pos" data-id="${c.id}">📍 Posicionar</button></div>`).join("") : '<div class="tag">Todos os clientes têm localização.</div>'}</div>` : ""}</div>
+        <button type="button" class="primary" id="zn-salvar" style="width:100%">Salvar</button>`;
+      side.innerHTML = h;
+      this.ligar(side);
+      if(this.map && this.mapaPronto){ this.pintarClientes(); }
+    },
+    painelAnalise(){
+      const per = this.root.querySelector("#zn-per"); if(!per) return;
+      per.innerHTML = [[1,"Hoje"],[7,"7 dias"],[30,"30 dias"],[0,"Tudo"]].map(([n,t])=>`<span class="per-b${this.periodo===n?" on":""}" data-p="${n}">${t}</span>`).join("");
+      per.querySelectorAll(".per-b").forEach(b=> b.onclick = ()=>{ this.periodo = +b.dataset.p; this.desenharPainel(); this.pintarEntregas(); });
+      const lista = this.entregasPeriodo(), por = {}; let sem = 0;
+      this.ordenados().forEach(z=> por[z.id] = []);
+      lista.forEach(e=>{ const z = this.zonaDe(e.pos); if(z) por[z.id].push(e); else sem++; });
+      this.root.querySelector("#zn-info").textContent = lista.length+" entrega(s) no período"+(sem ? " · "+sem+" sem zona" : "");
+      const box = this.root.querySelector("#zn-cards");
+      box.innerHTML = this.ordenados().map(z=>{
+        const l = por[z.id], pc = l.length ? Math.round(l.filter(e=>e.tot<=this.metaT(z)).length/l.length*100) : null;
+        const md = l.length ? Math.round(l.reduce((x,e)=>x+e.tot,0)/l.length) : null;
+        const cor = pc==null ? "var(--ink-soft)" : (pc>=80 ? "#3fb36b" : (pc<60 ? "#ff5a4f" : "var(--ink)"));
+        return `<div class="zk${this.selZona===z.id?" sel":""}" data-id="${z.id}" style="border-top-color:${z.cor};cursor:pointer"><h4>${admEsc(z.nome)}<span class="mut" style="font-size:13px;font-weight:400">${String(z.km).replace(".",",")} km</span></h4>
+          <div class="big" style="color:${cor}">${pc==null?"—":pc+"%"}</div><div class="sub">das entregas dentro da meta de ${this.metaT(z)} min</div><div class="bar"><i style="width:${pc||0}%;background:${z.cor}"></i></div>
+          <div class="row"><span class="mut">Entregas</span><b>${l.length}</b></div><div class="row"><span class="mut">Tempo médio</span><b>${md==null?"—":md+" min"}</b></div>
+          <div class="row"><span class="mut">Taxa de entrega (R$)</span><input class="zk-taxa" type="number" min="0" step="0.5" value="${(Number(z.taxa)||0).toFixed(2)}"></div></div>`;
+      }).join("");
+      box.querySelectorAll(".zk").forEach(card=>{
+        card.onclick = e=>{ if(e.target.closest("input")) return; this.selZona = this.selZona === card.dataset.id ? null : card.dataset.id; this.painelAnalise(); this.pintarCirculos(); };
+        card.querySelector(".zk-taxa").onchange = async e=>{
+          const z = this.cfg.circulos.find(x=>x.id===card.dataset.id); if(!z) return;
+          const v = parseFloat(String(e.target.value).replace(",","."));
+          z.taxa = v > 0 ? Math.round(v*100)/100 : 0; e.target.value = z.taxa.toFixed(2);
+          const ok = await this.salvarCfg(); toast(ok ? "Taxa salva" : "Salvo só neste aparelho — rode o SQL add-configuracoes.sql");
+        };
+      });
+    },
+    ligar(side){
+      const root = this.root, $ = s=>root.querySelector(s);
+      const on = (s, f)=>{ const e = $(s); if(e) e.onclick = f; };
+      on("#zn-marcar", ()=>{ this.modo = this.modo==="base" ? null : "base"; this.desenharPainel(); });
+      on("#zn-link", async ()=>{
+        const t = prompt("Cole o link do Google Maps da pizzaria:"); if(!t) return;
+        let p = coordsFromMapsUrl(t.trim());
+        if(!p && ehLinkCurtoMaps(t.trim())){
+          try{ const { data } = await supabase.functions.invoke("resolver-link-maps", { body:{ url: normLinkMaps(t.trim()) } }); if(data && data.lat != null) p = { lat:Number(data.lat), lng:Number(data.lng) }; }catch(e){}
+        }
+        if(!p){ toast("Não consegui ler esse link. Marque no mapa."); return; }
+        this.definirBase(p); if(this.map) this.map.flyTo({ center:[p.lng,p.lat], zoom:14 });
+      });
+      on("#zn-gps", ()=>{
+        if(!navigator.geolocation){ toast("Este aparelho não informa a localização"); return; }
+        navigator.geolocation.getCurrentPosition(pos=>{ const p = { lat:pos.coords.latitude, lng:pos.coords.longitude }; this.definirBase(p); if(this.map) this.map.flyTo({ center:[p.lng,p.lat], zoom:14 }); }, ()=> toast("Não consegui pegar a localização"), { enableHighAccuracy:true, timeout:10000 });
+      });
+      on("#zn-ok", ()=> this.confirmar());
+      on("#zn-no", ()=> this.cancelar());
+      on("#zn-ajustar", ()=>{ this.vista = this.vista==="cli" ? "cfg" : "cli"; this.desenharPainel(); });
+      on("#zn-add", ()=>{
+        const n = this.cfg.circulos.length, ult = this.ordenados().pop();
+        this.cfg.circulos.push({ id:"c"+Date.now().toString(36), nome:"Zona "+(n+1), cor:ZN_CORES[n % ZN_CORES.length], km: ult ? +(ult.km+1.5).toFixed(1) : 1.5, taxa:0 });
+        this.pintar(); this.desenharPainel();
+      });
+      on("#zn-salvar", async ()=>{ const ok = await this.salvarCfg(); toast(ok ? "Zonas e metas salvas" : "Salvo só neste aparelho — rode o SQL add-configuracoes.sql"); });
+      side.querySelectorAll(".zr[data-id]").forEach(row=>{
+        const z = this.cfg.circulos.find(x=>x.id===row.dataset.id); if(!z) return;
+        row.querySelector(".zc-cor").oninput = e=>{ z.cor = e.target.value; this.pintarCirculos(); };
+        row.querySelector(".zc-nome").oninput = e=>{ z.nome = e.target.value; clearTimeout(this._t); this._t = setTimeout(()=>this.pintarCirculos(), 300); };
+        row.querySelector(".zc-km").onchange = e=>{ const v = parseFloat(String(e.target.value).replace(",",".")); if(v > 0) z.km = v; this.pintar(); this.desenharPainel(); };
+        row.querySelector(".zm-t").onchange = e=>{ const v = parseInt(e.target.value,10); z.metaTotal = v>0 ? v : null; this.desenharPainel(); };
+        row.querySelector(".zm-r").onchange = e=>{ const v = parseInt(e.target.value,10); z.metaRota = v>0 ? v : null; this.desenharPainel(); };
+        row.querySelector(".zc-del").onclick = ()=>{ this.cfg.circulos = this.cfg.circulos.filter(x=>x!==z); this.pintar(); this.desenharPainel(); };
+      });
+      side.querySelectorAll(".zn-sem-it").forEach(el=> el.addEventListener("dragstart", e=> e.dataTransfer.setData("text/plain", el.dataset.id)));
+      side.querySelectorAll(".zn-pos").forEach(b=> b.onclick = ()=>{ this.modo = { cli:b.dataset.id }; toast("Clique no mapa onde o cliente mora"); });
+      if(!this._undoBound){ this._undoBound = true; document.addEventListener("click", e=>{ const u = e.target.closest && e.target.closest(".zn-undo"); if(u && this.root && this.root.isConnected) this.desfazer(u.dataset.id); }); }
+    }
+  };
+
   const NAV_ITENS = [
     { hash:"atendente", t:"Atendente", s:"Lançar pedidos",
       icon:"M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" },
@@ -4222,6 +4630,8 @@
       icon:"M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z" },
     { hash:"estoque", t:"Cardápio e Estoque", s:"Sabores, preços e estoque",
       icon:"M20 2H4c-1 0-2 .9-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1.1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4l16-.02V7z" },
+    { hash:"zoneamento", t:"Zoneamento", s:"Zonas de entrega no mapa",
+      icon:"M12 2a10 10 0 100 20 10 10 0 000-20zm0 3a7 7 0 110 14 7 7 0 010-14zm0 3a4 4 0 100 8 4 4 0 000-8z" },
     { hash:"config", t:"Configurações", s:"Equipe e regras",
       icon:"M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z" }
   ];
@@ -4307,7 +4717,7 @@
       }
     }
     if(hash === ""){ window.location.hash = "#/atendente"; return; } // sem tela inicial: abre direto no Atendente
-    const comMenu = ["atendente","producao","entregador","clientes","admin","config","estoque"].includes(hash);
+    const comMenu = ["atendente","producao","entregador","clientes","admin","config","estoque","zoneamento"].includes(hash);
     const tela = comMenu ? buildShell(root, hash) : root;
     if(hash === "atendente"){
       Atendente.render(tela);
@@ -4344,6 +4754,8 @@
       liveChannels.push(subscribeToTable("clientes", ()=> Clientes.refresh()));
     } else if(hash === "config"){
       Configuracoes.render(tela);
+    } else if(hash === "zoneamento"){
+      Zoneamento.render(tela);
     } else if(hash === "estoque"){
       Estoque.render(tela);
       liveChannels.push(subscribeToTable("bebidas", ()=> Estoque.refresh()));
